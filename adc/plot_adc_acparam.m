@@ -1,7 +1,9 @@
 function plot_adc_acparam(p, fseries, df, Fbins)
 
-fc = p.ADC_specs.fc;
-fs = p.ADC_specs.fs;
+ADC_specs = [p(:).ADC_specs];
+
+fc = [ADC_specs.fc];
+fs = ADC_specs(1).fs;    % FIXME ADC_sepcs(1)
 fif = calcalias(fc, fs);
 
 [fc_plot, fc_unit] = goodunit(fc, 'Hz', 'tex');
@@ -69,7 +71,7 @@ else
     plot(fc_plot, [p.SINAD], 'k', 'LineWidth',2);
     set(gca, 'FontSize', 12);
     legend('SNR', 'SINAD');
-    title(sprintf('f_s = %0.2f %s, %d bits, %0.2f Vpp full-scale', fs_plot, fs_unit, nbits, fsr), 'FontSize', 12, 'FontWeight', 'bold');
+    title(sprintf('f_s = %0.2f %s, %d bits, %0.2f Vpp full-scale', fs_plot, fs_unit, p(1).ADC_specs.nbits, p(1).ADC_specs.fsr), 'FontSize', 12, 'FontWeight', 'bold'); % FIXME p(1)
     ylabel('dB', 'FontSize', 12, 'FontWeight', 'bold');
     xlabel(sprintf('Frequency [%s]', fc_unit), 'FontSize', 12, 'FontWeight', 'bold');
     axis tight

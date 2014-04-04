@@ -1,41 +1,47 @@
-nbits = 16;
-fsr = 2;
+dataset = [];
 
-% 130 MS/s ADC (204/864*500 MHz = ~118.055 MHz)
-fs = 900*131071; % 117963900 Hz
-fc = 900*555119; % 499607100 Hz
-npts = 131071;
+for i=1:1:1
+    nbits = 16;
+    fsr = 2;
 
-% % 250 MS/s ADC (380/864*500 MHz = ~219.907 MHz)
-% fs = 1677*131071; % 219806067 Hz
-% fc = 1677*298013; % 499767801 Hz
-% npts = 131071;
+    % 130 MS/s ADC (204/864*500 MHz = ~118.055 MHz)
+    fs = 900*131071; % 117963900 Hz
+    fc(i) = 900*555119; % 499607100 Hz
+    npts = 131071;
 
-% % 250 MS/s ADC (376/864*500 MHz = ~217.593 MHz)
-% fs = 1660*131071; % 217577860 Hz
-% fc = 1660*301183; % 499963780 Hz
-% npts = 131071;
+    % % 250 MS/s ADC (380/864*500 MHz = ~219.907 MHz)
+    % fs = 1677*131071; % 219806067 Hz
+    % fc = 1677*298013; % 499767801 Hz
+    % npts = 131071;
 
-A = fsr/2;
-dc = A;
-noiserms = fsr/1e4;
+    % % 250 MS/s ADC (376/864*500 MHz = ~217.593 MHz)
+    % fs = 1660*131071; % 217577860 Hz
+    % fc = 1660*301183; % 499963780 Hz
+    % npts = 131071;
 
-t = (0:npts-1)/fs;
+    A = fsr/2;
+    dc = A;
+    noiserms = fsr/1e4;
 
-%sigmf_coeff = 2;
+    t = (0:npts-1)/fs;
 
-signal_linear = sin(2*pi*fc*t);
-%signal_nonlinear = (2*sigmf(signal_linear,[sigmf_coeff 0])-1);
-signal = signal_linear;
-noise = noiserms*randn(1,npts);
+    %sigmf_coeff = 2;
 
-data_analog_ac = A*signal + noise;
-data_analog = data_analog_ac + dc;
-lsb = fsr/((2^nbits));
-data = fix(data_analog/lsb);
+    signal_linear = sin(2*pi*fc(i)*t)';
+    %signal_nonlinear = (2*sigmf(signal_linear,[sigmf_coeff 0])-1);
+    signal = signal_linear;
+    noise = noiserms*randn(npts,1);
 
-% Clip
-data(data > (2^nbits)-1) = (2^nbits)-1;
-data(data < 0) = 0;
+    data_analog_ac = A*signal + noise;
+    data_analog = data_analog_ac + dc;
+    lsb = fsr/((2^nbits));
+    data = fix(data_analog/lsb);
 
-adc_acparam(data, nbits, fs, fc, fsr);
+    % Clip
+    data(data > (2^nbits)-1) = (2^nbits)-1;
+    data(data < 0) = 0;
+
+    dataset = [dataset data];
+end
+
+adc_acparam(dataset, nbits, fs, fc, fsr);
