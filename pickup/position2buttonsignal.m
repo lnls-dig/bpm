@@ -18,11 +18,8 @@ function [V,P] = position2buttonsignal(pickup, beampos, I, frf)
 %   Copyright (C) 2012 CNPEM
 %   Licensed under GNU Lesser General Public License v3.0 (LGPL)
 %
-%   Based on Angel Olmos (ALBA) Matlab script, which is based on Guenther Rehm's code (Diamond Light Source) and INFN/DAFNE calculations.
-%	For further information please refer to www.cells.es/Divisions/Accelerators/RF_Diagnostics/Diagnostics/OrbitPosition/Tools/BPMs_GUI
-%
-%   Revisions:
-%       2012-08    Daniel de Oliveira Tavares (LNLS/DIG) - Initial realease
+%   Based on Angel Olmos's (ALBA) Matlab script, which is based on Guenther Rehm's code (Diamond Light Source) and INFN/DAFNE calculations.
+%   For further information please refer to www.cells.es/Divisions/Accelerators/RF_Diagnostics/Diagnostics/OrbitPosition/Tools/BPMs_GUI
 
 if (size(beampos,2) ~= 2) || (size(beampos,1) ~= length(I))
      error('bpm:position2buttonsignal:inputarguments', 'Incompatible input argument sizes.');

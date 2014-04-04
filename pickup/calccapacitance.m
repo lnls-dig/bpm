@@ -12,11 +12,8 @@ function Cb = calccapacitance(button)
 %   Copyright (C) 2012 CNPEM
 %   Licensed under GNU Lesser General Public License v3.0 (LGPL)
 %
-%   Based on Angel Olmos (ALBA) Matlab script, which is based on Guenther Rehm's code (Diamond Light Source) and INFN/DAFNE calculations.
-%	For further information please refer to www.cells.es/Divisions/Accelerators/RF_Diagnostics/Diagnostics/OrbitPosition/Tools/BPMs_GUI
-%
-%   Revisions:
-%       2012-08    Daniel de Oliveira Tavares (LNLS/DIG) - Initial realease
+%   Based on Angel Olmos's (ALBA) Matlab script, which is based on Guenther Rehm's code (Diamond Light Source) and INFN/DAFNE calculations.
+%   For further information please refer to www.cells.es/Divisions/Accelerators/RF_Diagnostics/Diagnostics/OrbitPosition/Tools/BPMs_GUI
 
 physical_constants;
 

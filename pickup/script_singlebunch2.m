@@ -9,10 +9,6 @@
 
 %   Copyright (C) 2012 CNPEM
 %   Licensed under GNU Lesser General Public License v3.0 (LGPL)
-%
-%   Revisions:
-%       2012-08    Daniel de Oliveira Tavares (LNLS/DIG) - Initial realease
-%       2012-09-13 Rafael Antonio Baron (LNLS/DIG) - Added sweep of the BPM parameters
 
 clear all
 
