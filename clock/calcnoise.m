@@ -12,7 +12,7 @@ function rms_position = calcnoise(abcd, rms_corr, rms_uncorr, K)
 %       rms_corr: 4xN matrix containing RMS value of each antenna's
 %                 correlated noise, following the same index convetion as
 %                 in abcd
-%       rms_uncorr: 4xN matrix containing RMS value of each antenna's 
+%       rms_uncorr: 4xN matrix containing RMS value of each antenna's
 %                   uncorrelated noise, following the same index convetion
 %                   as in abcd
 %       K: difference over sum gain (inverse of BPM sensitivity)
@@ -26,16 +26,13 @@ function rms_position = calcnoise(abcd, rms_corr, rms_uncorr, K)
 %       Estimates RMS value of position noise when antenna signals
 %       A = B = C = D = 1, the correlated noise in all antennas has 1e-5
 %       RMS value, the uncorrelated noise in all antennas has 1e-6 RMS
-%       value and the difference over sum gain equals 10 nm. 
+%       value and the difference over sum gain equals 10 nm.
 %       The result is approximately 5 nm.
 %
 %   See also SIMNOISE
 
 %   Copyright (C) 2012 CNPEM
 %   Licensed under GNU Lesser General Public License v3.0 (LGPL)
-%
-%   Revisions:
-%       2012-08    Daniel de Oliveira Tavares (LNLS/DIG) - Initial realease
 
 % Decompose abcd, rms_corr and rms_uncorr A, B, C, D components into
 % individual variables for better code readability
