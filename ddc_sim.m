@@ -8,8 +8,8 @@ adc_res = adc.resolution;           % AD resolution [bits]
 duration = 60e-3;                   % Duration of simulation [s]
 h = storagering.h;                  % Accelerator's harmonic number (number of buckets)
 adch = adc.h;                       % ADC sampling harmonic
-R = 1112;                           % FOFB decimation rate (in relation to ADC sampling frequency) 
-fswR = 1112;                        % Switching rate (in relation to ADC sampling frequency) 
+R = 1112;                           % FOFB decimation rate (in relation to ADC sampling frequency)
+fswR = 1112;                        % Switching rate (in relation to ADC sampling frequency)
 posh = 10;                          % Position signal frequency (in relation to FOFB data rate)
 max_pos = 10e-6;                    % Position signal amplitude [m]
 K = 8.5e-3;                         % Difference-over-sum gain [m]
@@ -44,7 +44,7 @@ windowfcn = @tukeywin2;              % Compensating window function
 if fixed_point_sim
     fp = fipref;
     fp.LoggingMode = 'On';
-    
+
     f = fimath( 'roundmode', 'floor',         ...
                 'overflowmode', 'saturate',   ...
                 'productmode', 'keepmsb',     ...
@@ -81,7 +81,7 @@ if fixed_point_sim == true
     swindowf = sfi(swindow,fwidth,fwidth-2);
     a_windowedf = swindowf.*adc_af;
     c_windowedf = swindowf.*adc_cf;
-end    
+end
 
 %% Digital downconversion
 Tfofb = 1/Ffofb;
@@ -106,7 +106,7 @@ if fixed_point_sim == false
 
     c_ff_w = downconv(c_windowed, cic_norm, mix_sin, mix_cos);
     c_ff_s = downconv(adc_c,      cic_norm, mix_sin, mix_cos);
-    
+
     a_mag = abs(double(a_ff_w));
     c_mag = abs(double(c_ff_w));
     a_mag_s = abs(double(a_ff_s));
@@ -118,7 +118,7 @@ else
 
     c_ff_wf = downconv(c_windowedf, cic_norm, mix_sinf, mix_cosf);
     c_ff_sf = downconv(adc_cf,      cic_norm, mix_sinf, mix_cosf);
-    
+
     a_mag = abs(double(a_ff_wf));
     c_mag = abs(double(c_ff_wf));
     a_mag_s = abs(double(a_ff_sf));
@@ -131,17 +131,17 @@ calc_pos_s = K*(a_mag_s-c_mag_s)./(a_mag_s+c_mag_s);
 
 %% Plotting
 % Compute FFTs
-[MAF_a_mag, ff_a_mag] = fft2(a_mag(50:end), Ffofb, @nuttallwin);
-[MAF_c_mag, ff_c_mag] = fft2(c_mag(50:end), Ffofb, @nuttallwin);
-[MAF_a_mag_s, ff_a_mag_s] = fft2(a_mag_s(50:end), Ffofb, @nuttallwin);
-[MAF_c_mag_s, ff_c_mag_s] = fft2(c_mag_s(50:end), Ffofb, @nuttallwin);
+[MAF_a_mag, ff_a_mag] = fourierseries(a_mag(50:end), Ffofb, @nuttallwin);
+[MAF_c_mag, ff_c_mag] = fourierseries(c_mag(50:end), Ffofb, @nuttallwin);
+[MAF_a_mag_s, ff_a_mag_s] = fourierseries(a_mag_s(50:end), Ffofb, @nuttallwin);
+[MAF_c_mag_s, ff_c_mag_s] = fourierseries(c_mag_s(50:end), Ffofb, @nuttallwin);
 
 % Ignore the first samples to avoid filter transient
-[MAF_calc_pos, ff_calc_pos] = fft2(calc_pos(50:end), Ffofb, @nuttallwin);
-[MAF_calc_pos_s, ff_calc_pos_s] = fft2(calc_pos_s(50:end), Ffofb, @nuttallwin);
+[MAF_calc_pos, ff_calc_pos] = fourierseries(calc_pos(50:end), Ffofb, @nuttallwin);
+[MAF_calc_pos_s, ff_calc_pos_s] = fourierseries(calc_pos_s(50:end), Ffofb, @nuttallwin);
 
 % General coloring rules: unswitched signal : green, switched: red,
-% sausaged: blue. If overplotting, the second color may be yellow, 
+% sausaged: blue. If overplotting, the second color may be yellow,
 % magenta and cyan, respectively.
 
 fig_fft = figure('name','a, c FFT');
