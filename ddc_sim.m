@@ -1,6 +1,6 @@
 %% Parameters
 sirius_parameters;
-acquisition_parameters;
+sirius_acquisitionparameters;
 
 fixed_point_sim = false;            % Selects type of simulation (floating point or fixed point)
 fwidth = 24;                        % [number of bits]
