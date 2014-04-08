@@ -131,17 +131,18 @@ calc_pos_s = K*(a_mag_s-c_mag_s)./(a_mag_s+c_mag_s);
 
 %% Plotting
 % Compute FFTs
-[MAF_a_mag, ff_a_mag] = fft2(a_mag(50:end), Ffofb, @nuttallwin);
-[MAF_c_mag, ff_c_mag] = fft2(c_mag(50:end), Ffofb, @nuttallwin);
-[MAF_a_mag_s, ff_a_mag_s] = fft2(a_mag_s(50:end), Ffofb, @nuttallwin);
-[MAF_c_mag_s, ff_c_mag_s] = fft2(c_mag_s(50:end), Ffofb, @nuttallwin);
+[MAF_a_mag, ff_a_mag] = fourierseries(a_mag(50:end), Ffofb, @nuttallwin);
+[MAF_c_mag, ff_c_mag] = fourierseries(c_mag(50:end), Ffofb, @nuttallwin);
+[MAF_a_mag_s, ff_a_mag_s] = fourierseries(a_mag_s(50:end), Ffofb, @nuttallwin);
+[MAF_c_mag_s, ff_c_mag_s] = fourierseries(c_mag_s(50:end), Ffofb, @nuttallwin);
 
-% Ignore the first samples to avoid filter transient
-[MAF_calc_pos, ff_calc_pos] = fft2(calc_pos(50:end), Ffofb, @nuttallwin);
-[MAF_calc_pos_s, ff_calc_pos_s] = fft2(calc_pos_s(50:end), Ffofb, @nuttallwin);
+% Ignore the 50 first samples to avoid filter transient
+[MAF_calc_pos, ff_calc_pos] = fourierseries(calc_pos(50:end), Ffofb, @nuttallwin);
+[MAF_calc_pos_s, ff_calc_pos_s] = fourierseries(calc_pos_s(50:end), Ffofb, @nuttallwin);
 
-% General coloring rules: unswitched signal : green, switched: red,
-% sausaged: blue. If overplotting, the second color may be yellow, 
+% General coloring rules: unswitched signal: green, switched: red,
+% sausaged: blue.
+% If overplotting, the second color may be yellow, 
 % magenta and cyan, respectively.
 
 fig_fft = figure('name','a, c FFT');
