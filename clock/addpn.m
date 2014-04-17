@@ -11,5 +11,5 @@ for i=1:size(signals, 2)
         reset(randstream, seed);
     end
 
-    abcd_jitter(:,i) = real(add_phase_noise(signals(:, i), fs, pn_f, pn_P + 20*log10(fc/fs)));
+    abcd_jitter(:,i) = add_phase_noise(signals(:, i), fs, pn_f, pn_P + 20*log10(fc/fs));
 end
