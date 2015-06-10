@@ -4,7 +4,7 @@ if nargin < 2
     Kx = 1;
 end
 if nargin < 3
-    Ky = 1;
+    Ky = Kx;
 end
 if nargin < 4
     Ks = 1;

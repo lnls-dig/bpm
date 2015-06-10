@@ -92,20 +92,18 @@ inv_gain = dfilt.scalar(1/gain(cic_f)); %normalize the CIC
 cic_norm = cascade(cic_f,inv_gain);
 
 fif = calcalias(fbeam,fadc);
-mix_cos = cos(2*pi*fif*t+pi/30); %a bit displaced to avoid underflow warnings
-mix_sin = sin(2*pi*fif*t+pi/30);
+mix = exp(1j*2*pi*fif*t+pi/30); %a bit displaced to avoid underflow warnings
 
 if fixed_point_sim == true
-    mix_cosf = sfi(mix_cos,fwidth,fwidth-2);
-    mix_sinf = sfi(mix_sin,fwidth,fwidth-2);
+    mix_f = sfi(mix,fwidth,fwidth-2);
 end
 
 if fixed_point_sim == false
-    a_ff_w = downconv(a_windowed, cic_norm, mix_sin, mix_cos);
-    a_ff_s = downconv(adc_a,      cic_norm, mix_sin, mix_cos);
+    a_ff_w = ddc(a_windowed, mix, cic_norm);
+    a_ff_s = ddc(adc_a,      mix, cic_norm);
 
-    c_ff_w = downconv(c_windowed, cic_norm, mix_sin, mix_cos);
-    c_ff_s = downconv(adc_c,      cic_norm, mix_sin, mix_cos);
+    c_ff_w = ddc(c_windowed, mix, cic_norm);
+    c_ff_s = ddc(adc_c,      mix, cic_norm);
 
     a_mag = abs(double(a_ff_w));
     c_mag = abs(double(c_ff_w));
@@ -113,11 +111,11 @@ if fixed_point_sim == false
     c_mag_s = abs(double(c_ff_s));
 
 else
-    a_ff_wf = downconv(a_windowedf, cic_norm, mix_sinf, mix_cosf);
-    a_ff_sf = downconv(adc_af,      cic_norm, mix_sinf, mix_cosf);
+    a_ff_wf = ddc(a_windowedf, mix_f, cic_norm);
+    a_ff_sf = ddc(adc_af,      mix_f, cic_norm);
 
-    c_ff_wf = downconv(c_windowedf, cic_norm, mix_sinf, mix_cosf);
-    c_ff_sf = downconv(adc_cf,      cic_norm, mix_sinf, mix_cosf);
+    c_ff_wf = ddc(c_windowedf, mix_f, cic_norm);
+    c_ff_sf = ddc(adc_cf,      mix_f, cic_norm);
 
     a_mag = abs(double(a_ff_wf));
     c_mag = abs(double(c_ff_wf));
