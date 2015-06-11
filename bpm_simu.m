@@ -87,6 +87,15 @@ grid on
 
 %% Plot error acording to pipe
 
-xy1m_error=(xy1m-xym)./xy1m;
+[xx,yy] = meshgrid(xym(:,1),xym(:,2));
+%%xy1m_error=sqrt((xy1m(:,1)-xym(:,1)).^2+(xy1m(:,2)-xym(:,2)).^2);
+xy1m_error=sqrt((xx.^2+yy.^2));
 figure(3)
-contour(xym(:,1),xym(:,2),xy1,xy1m_error);
+%mesh(xym(:,1)',xym(:,2)',xy1m_error)
+%surf(xy1m_error)
+mesh(xx,yy,xy1m_error)
+
+%xy1m_error=sqrt((xy1m(:,1)-xym(:,1)).^2+(xy1m(:,2)-xym(:,2)).^2);
+%figure(3)
+%plot3(xym(:,1)',xym(:,2)',xy1m_error)
+%surf(xy1m_error)
