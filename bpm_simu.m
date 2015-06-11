@@ -3,8 +3,8 @@ clear all
 
 %% Parameters
 
-button_r = 3;
-chamber_r = 12;
+button_r = 4;
+chamber_r = 24;
 
 Kx = 8.89; %8.89
 Ky = 8.89;
