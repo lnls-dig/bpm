@@ -2,7 +2,7 @@
 % Function that uses a vector 
 %-------------------------------------
 
-function [Kx] = kcalc(x_real,x_estimated,qt)
+function [Kx] = kcalc(x_real,x_estimated)
 len=length(x_real);
 mid=ceil(len/2);
 
