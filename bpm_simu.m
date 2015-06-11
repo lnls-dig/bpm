@@ -3,15 +3,15 @@ clear all
 
 %% Parameters
 
-button_r = 4;
-chamber_r = 24;
+button_r = 2;
+chamber_r = 12;
 
 Kx = 8.89; %8.89
-Ky = 8.89;
+Ky = 0;
 Ks = 1;
 
-x_array_length = chamber_r;
-y_array_length = 0;
+x_array_length = 10; %length in mm
+y_array_length = 0; %length in mm
 array_size = 1e4;
 
 %% Create xy vector
@@ -59,7 +59,7 @@ y_chamber = chamber_r*sin(theta);
 % Create xy vector matrix
 
 matrix_size = 15;
-x_array_length = chamber_r/sqrt(2)*0.9;
+x_array_length = chamber_r/sqrt(2)*0.6;
 
 xm = linspace(-x_array_length, x_array_length, matrix_size);
 xym=zeros(matrix_size*matrix_size,2);
@@ -82,5 +82,11 @@ figure(2)%, set(gcf,'position',[100 100 200 400])
 plot(x_chamber,y_chamber,'b',xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'*')
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
-legend('Chamber','Real Positions','Calculated Positions',"location",'outside')
+legend('Chamber','Real Positions','Calculated Positions')
 grid on
+
+%% Plot error acording to pipe
+
+xy1m_error=(xy1m-xym)./xy1m;
+figure(3)
+contour(xym(:,1),xym(:,2),xy1,xy1m_error);
