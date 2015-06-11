@@ -48,10 +48,11 @@ d_a1 = 3*pi/2 - half_angle; d_a2 = 3*pi/2 + half_angle;
 abcd = zeros(size(xy,1),4);
 
 for i = 1:size(xy,1)
-  integration_steps = [linspace(a_a1,a_a2,steps);
-		       linspace(b_a1,b_a2,steps);
-		       linspace(c_a1,c_a2,steps); linspace(d_a1,d_a2,steps) ]'; 
-  abcd(i,:) = trapz(axdensity(r(i),theta(i),chamber_r,integration_steps,current));
+  integration_steps = [ linspace(a_a1,a_a2,steps);
+		                    linspace(b_a1,b_a2,steps);
+		                    linspace(c_a1,c_a2,steps); 
+                        linspace(d_a1,d_a2,steps) ]'; 
+  abcd(i,:) = trapz(axdensity(r(i),theta(i),chamber_r,integration_steps,current))*(integration_steps(2,1)-integration_steps(1,1));
 end
 
 end
