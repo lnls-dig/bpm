@@ -8,7 +8,7 @@ r = [1 2 5 10];
 phi = linspace(-pi,pi,1000);
 
 for i=1:4
-  j(i,:) = current/(2*pi)*((chamber_r^2-r(i)^2)./(chamber_r^2+r(i)^2-2*chamber_r*r(i)*cos(phi-theta)));
+  j(i,:) = current/(2*pi*chamber_r)*((chamber_r^2-r(i)^2)./(chamber_r^2+r(i)^2-2*chamber_r*r(i)*cos(phi-theta)));
 end
 
 
