@@ -28,10 +28,11 @@ end
 % Button angles from center of chamber
 half_angle = asin(button_r/chamber_r);
 
-a_a1 =   pi/4 - half_angle; a_a2 =   pi/4 + half_angle;
-b_a1 = 3*pi/4 - half_angle; b_a2 = 3*pi/4 + half_angle;
-c_a1 = 5*pi/4 - half_angle; c_a2 = 5*pi/4 + half_angle;
-d_a1 = 7*pi/4 - half_angle; d_a2 = 7*pi/4 + half_angle;
+a_a1 =   0 - half_angle; a_a2 =   0 + half_angle;
+b_a1 = pi/2 - half_angle; b_a2 = pi/2 + half_angle;
+c_a1 = pi - half_angle; c_a2 = pi + half_angle;
+d_a1 = 3*pi/2 - half_angle; d_a2 = 3*pi/2 + half_angle;
+
 
 %% Each button receives power according to the current induced in its 
 %  circumference arc
