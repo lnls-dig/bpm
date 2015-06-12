@@ -8,7 +8,7 @@ clear all
 button_r = 3;
 chamber_r = 12;
 
-Kx = 8.89; %8.89
+Kx = 1; %8.89
 Ky = 1;
 Ks = 1;
 
@@ -25,11 +25,11 @@ xy = [x y];
 
 % Convert to abcd coordinates
 
-[abcd] = pos2abcd(xy,button_r,chamber_r);
+[abcd] = pos2abcd_cross(xy,button_r,chamber_r);
 
 % Calculate position xy1
 
-xy1 = calcpos(abcd,Kx,Ky,Ks);
+xy1 = calcpos_pipi_cross(abcd,Kx,Ky);
 
 % Calculate Kx;
 
@@ -38,7 +38,7 @@ Ky = Kx;
 
 % Recalculate position xy1 with correct Kx
 
-xy1 = calcpos(abcd,Kx,Ky,Ks);
+xy1 = calcpos_pipi_cross(abcd,Kx,Ky);
 
 % Plot relation between real and estimated values
 figure(1)
@@ -57,12 +57,12 @@ theta = linspace(0,2*pi); % Chamber draw
 x_chamber = chamber_r*cos(theta);
 y_chamber = chamber_r*sin(theta);
 
-[x_button,y_button] = button_draw(chamber_r,button_r,4,pi/4);
+[x_button,y_button] = button_draw(chamber_r,button_r,4,0);
 
 % Create xy vector matrix
 
 matrix_size = 15;
-x_array_length = chamber_r/sqrt(2)*0.2;
+x_array_length = chamber_r/sqrt(2)*0.6;
 
 xm = linspace(-x_array_length, x_array_length, matrix_size);
 xym=zeros(matrix_size*matrix_size,2);
@@ -75,10 +75,10 @@ for i=1:matrix_size
   xym(1+(i-1)*matrix_size:matrix_size+(i-1)*matrix_size,1) = xm;
 end
 
-% Estimated Matrix
+% Estimating Matrix
 
-[abcdm] = pos2abcd(xym,button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos(abcdm,Kx,Ky,Ks); % Calculate position xy1
+[abcdm] = pos2abcd_cross(xym,button_r,chamber_r); % Convert to abcd coordinates
+xy1m = calcpos_pipi_cross(abcdm,Kx,Ky); % Calculate position xy1
 
 
 figure(2)%, set(gcf,'position',[100 100 200 400])
@@ -106,8 +106,8 @@ xm = linspace(-x_array_length, x_array_length, matrix_size);
 xx = reshape(xx,[],1); % reshape into an array
 yy = reshape(yy,[],1); % reshape into an array
 
-[abcdm] = pos2abcd([xx yy],button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos(abcdm,Kx,Ky,Ks); % Calculate position xy1
+[abcdm] = pos2abcd_cross([xx yy],button_r,chamber_r); % Convert to abcd coordinates
+xy1m = calcpos_pipi_cross(abcdm,Kx,Ky); % Calculate position xy1
 
 x1m = reshape(xy1m(:,1),[],sqrt(length(xx)));
 y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
