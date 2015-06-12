@@ -3,11 +3,11 @@ clear all
 
 %% Parameters
 
-button_r = 2;
+button_r = 3;
 chamber_r = 12;
 
 Kx = 8.89; %8.89
-Ky = 0;
+Ky = 1;
 Ks = 1;
 
 x_array_length = 10; %length in mm
@@ -45,8 +45,6 @@ grid on
 xlabel('Real beam position (mm)')
 ylabel('Estimated beam Position (mm)')
 title('ABCD Linear Aproximation')
-
-%% Correction od Kx and Ky (made manually, use function "kcalc.m")
 
 %% Plot Matrix
 
@@ -88,8 +86,20 @@ grid on
 %% Plot error acording to pipe
 
 [xx,yy] = meshgrid(xym(:,1),xym(:,2));
+
+xx = reshape(xx,[],1); % reshape into an array
+yy = reshape(yy,[],1); % reshape into an array
+
+[abcdm] = pos2abcd([xx yy],button_r,chamber_r); % Convert to abcd coordinates
+xy1m = calcpos(abcdm,Kx,Ky,Ks); % Calculate position xy1
+
+x1m = reshape(xy1m(:,1),[],sqrt(length(xx)));
+y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
+xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
+yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
+
 %%xy1m_error=sqrt((xy1m(:,1)-xym(:,1)).^2+(xy1m(:,2)-xym(:,2)).^2);
-xy1m_error=sqrt((xx.^2+yy.^2));
+xy1m_error=((x1m-xx).^2+(y1m-yy).^2);
 figure(3)
 %mesh(xym(:,1)',xym(:,2)',xy1m_error)
 %surf(xy1m_error)
