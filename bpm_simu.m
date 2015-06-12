@@ -1,7 +1,9 @@
 close all
 clear all
 
-%% Parameters
+%% Estimate real and measured beam positions
+
+% Parameters
 
 button_r = 3;
 chamber_r = 12;
@@ -14,18 +16,18 @@ x_array_length = 10; %length in mm
 y_array_length = 0; %length in mm
 array_size = 1e4;
 
-%% Create xy vector
+% Create xy vector
 
 x = linspace(-x_array_length, x_array_length, array_size)';
 y = linspace(-y_array_length, y_array_length, array_size)';
 
 xy = [x y];
 
-%% Convert to abcd coordinates
+% Convert to abcd coordinates
 
 [abcd] = pos2abcd(xy,button_r,chamber_r);
 
-%% Calculate position xy1
+% Calculate position xy1
 
 xy1 = calcpos(abcd,Kx,Ky,Ks);
 
@@ -38,7 +40,7 @@ Ky = Kx;
 
 xy1 = calcpos(abcd,Kx,Ky,Ks);
 
-%% Plot relation between real and estimated values
+% Plot relation between real and estimated values
 figure(1)
 plot(xy(:,1),xy1(:,1))
 grid on
@@ -50,9 +52,12 @@ title('ABCD Linear Aproximation')
 
 % Create chamber plot
 
-theta = linspace(0,2*pi);
+theta = linspace(0,2*pi); % Chamber draw
+
 x_chamber = chamber_r*cos(theta);
 y_chamber = chamber_r*sin(theta);
+
+[x_button,y_button] = button_draw(chamber_r,button_r,4,pi/4);
 
 % Create xy vector matrix
 
@@ -77,15 +82,27 @@ xy1m = calcpos(abcdm,Kx,Ky,Ks); % Calculate position xy1
 
 
 figure(2)%, set(gcf,'position',[100 100 200 400])
-plot(x_chamber,y_chamber,'b',xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'*')
+plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
+hold on
+plot(x_chamber,y_chamber,'k--') % Plot draws
+for i=1:size(x_button,1)
+    plot(x_button(i,:),y_button(i,:),'k.')
+end
+hold off
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
-legend('Chamber','Real Positions','Calculated Positions')
+legend('Real Positions','Calculated Positions','Location','best')
+title('Real x Estimated Beam Position')
 grid on
 
 %% Plot error acording to pipe
 
-[xx,yy] = meshgrid(xym(:,1),xym(:,2));
+matrix_size = 50;
+x_array_length = chamber_r/sqrt(2)*0.6;
+
+xm = linspace(-x_array_length, x_array_length, matrix_size);
+
+[xx,yy] = meshgrid(xm,xm);
 
 xx = reshape(xx,[],1); % reshape into an array
 yy = reshape(yy,[],1); % reshape into an array
@@ -98,14 +115,23 @@ y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
-%%xy1m_error=sqrt((xy1m(:,1)-xym(:,1)).^2+(xy1m(:,2)-xym(:,2)).^2);
-xy1m_error=((x1m-xx).^2+(y1m-yy).^2);
-figure(3)
-%mesh(xym(:,1)',xym(:,2)',xy1m_error)
-%surf(xy1m_error)
-mesh(xx,yy,xy1m_error)
+%xy1m_error=sqrt(x1m-xx).^2+(y1m-yy).^2);
+xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
-%xy1m_error=sqrt((xy1m(:,1)-xym(:,1)).^2+(xy1m(:,2)-xym(:,2)).^2);
-%figure(3)
-%plot3(xym(:,1)',xym(:,2)',xy1m_error)
-%surf(xy1m_error)
+% Plotting the surface
+
+figure(3)
+surf(xx,yy,xy1m_error) % Plot data
+hold on
+plot(x_chamber,y_chamber,'k--') % Plot draws
+for i=1:size(x_button,1)
+    plot(x_button(i,:),y_button(i,:),'k.')
+end
+hold off
+grid on
+title('Estimation Error')
+ylabel('Y (mm]')
+xlabel('X (mm)')
+zlabel('Error')
+set(gca,'DataAspectRatio',[10 10 1])
+axis tight
