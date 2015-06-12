@@ -4,3 +4,6 @@ __pycache__
 
 # C extensions
 *.so
+
+octave-workspace
+
