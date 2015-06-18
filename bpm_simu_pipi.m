@@ -21,7 +21,7 @@ array_size = 1e4;
 x = linspace(-x_array_length, x_array_length, array_size)';
 y = linspace(-y_array_length, y_array_length, array_size)';
 
-xy = [x y];
+xy = [x y] + 0.1;
 
 % Convert to abcd coordinates
 
