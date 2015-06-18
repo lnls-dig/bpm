@@ -47,7 +47,7 @@ grid on
 xlabel('Real Beam Position (mm)')
 ylabel('Estimated Beam Position (mm)')
 title('ABCD Linear Aproximation')
-axis equal
+axis([min(xy(:,1)) max(xy(:,1)) min(xy1(:,1)) max(xy1(:,1))])
 
 %% Plot Matrix
 
@@ -63,7 +63,7 @@ y_chamber = chamber_r*sin(theta);
 % Create xy vector matrix
 
 matrix_size = 15;
-x_array_length = chamber_r/sqrt(2)*0.2;
+x_array_length = chamber_r/sqrt(2)*0.6;
 
 xm = linspace(-x_array_length, x_array_length, matrix_size);
 xym=zeros(matrix_size*matrix_size,2);
@@ -96,6 +96,37 @@ legend('Real Positions','Calculated Positions','Location','best')
 title('Real x Estimated Beam Position')
 grid on
 
+%% Zoomed plot
+
+% Create xy vector matrix
+
+matrix_size = 15;
+x_array_length = 2; % length in mm
+
+xm = linspace(-x_array_length, x_array_length, matrix_size);
+xym=zeros(matrix_size*matrix_size,2);
+
+for i=1:matrix_size
+  xym(1+(i-1)*matrix_size:matrix_size+(i-1)*matrix_size,2) = xm(i);
+end
+
+for i=1:matrix_size
+  xym(1+(i-1)*matrix_size:matrix_size+(i-1)*matrix_size,1) = xm;
+end
+
+% Estimated Matrix
+
+[abcdm] = pos2abcd_cross(xym,button_r,chamber_r); % Convert to abcd coordinates
+xy1m = calcpos_pipi_cross(abcdm,Kx,Ky); % Calculate position xy1
+
+figure(3)
+plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
+axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1)
+axis equal
+legend('Real Positions','Calculated Positions','Location','bestoutside')
+title('Real x Estimated Beam Position')
+grid on
+
 %% Plot error acording to pipe
 
 matrix_size = 50;
@@ -120,8 +151,9 @@ xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
 % Plotting the surface
 
-figure(3)
-surf(xx,yy,xy1m_error) % Plot data
+%{
+figure(4)
+surf(xx,yy,xy1m_error); % Plot data
 hold on
 plot(x_chamber,y_chamber,'k--') % Plot draws
 for i=1:size(x_button,1)
@@ -129,9 +161,21 @@ for i=1:size(x_button,1)
 end
 hold off
 grid on
-title('Estimation Error')
-ylabel('Y (mm]')
+title('Error Estimation')
+ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')
-set(gca,'DataAspectRatio',[10 10 1])
-axis tight
+%set(gca,'DataAspectRatio',[10 10 1])
+axis equal
+%}
+
+figure(4)
+contourf(xx,yy,xy1m_error); % Plot data
+colorbar;
+grid on
+title('Error Estimation')
+ylabel('Y (mm)')
+xlabel('X (mm)')
+zlabel('Error')
+%set(gca,'DataAspectRatio',[10 10 1])
+axis equal
