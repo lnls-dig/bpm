@@ -8,7 +8,7 @@ clear all
 button_r = 3;
 chamber_r = 12;
 
-Kx = 8.89; %8.89
+Kx = 1; %8.89
 Ky = 1;
 Ks = 1;
 
@@ -44,8 +44,8 @@ xy1 = calcpos(abcd,Kx,Ky,Ks);
 figure(1)
 plot(xy(:,1),xy1(:,1))
 grid on
-xlabel('Real beam position (mm)')
-ylabel('Estimated beam Position (mm)')
+xlabel('Real Beam Position (mm)')
+ylabel('Estimated Beam Position (mm)')
 title('ABCD Linear Aproximation')
 
 %% Plot Matrix
