@@ -15,12 +15,9 @@ b = abcd(:,2);
 c = abcd(:,3);
 d = abcd(:,4);
 
-ac = a-c;
-bd = b-d;
-ab = a-b;
-cd = c-d;
 
-xy = [log2(sqrt((a.*b)./(c.*d)))*Kx log2(sqrt((a.*d)./(b.*c)))*Ky]; % first equation
-%xy = [(0.5*(log(a)+log(b)-log(c)-log(d)))*Kx (0.5*(log(a)+log(d)-log(b)-log(c)))*Ky]; % Working
-%xy = [(log(a)-log(c))*Kx (log(b)-log(d))*Ky]; % cross config
+%xy = [log2(sqrt((a.*b)./(c.*d)))*Kx log2(sqrt((a.*d)./(b.*c)))*Ky]; % first equation
+xy = [log2(sqrt((a.*d)./(b.*c)))*Kx log2(sqrt((a.*b)./(c.*d)))*Ky]; % first equation
+
+
 q = 0; % Not implemented yet

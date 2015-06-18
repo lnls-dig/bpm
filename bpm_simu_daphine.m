@@ -29,18 +29,7 @@ xy = [x y];
 
 % Calculate position xy1
 
-xy1 = calcpos_pipi(abcd,Kx,Ky);
-
-% Relation between real and measured values (and why you cannot use this
-% method
-
-figure(1)
-plot(xy(:,1),xy1(:,1))
-grid on
-xlabel('Real Beam Position (mm)')
-ylabel('Estimated Beam Position (mm)')
-title('ABCD Linear Aproximation')
-axis([-round(max(xy(:,1))) round(max(xy(:,1))) min(xy1(:,1))*0.99 max(xy1(:,1))*1.01])
+xy1 = calcpos(abcd,Kx,Ky,Ks);
 
 % Calculate Kx;
 
@@ -49,7 +38,9 @@ Ky = Kx;
 
 % Recalculate position xy1 with correct Kx
 
-xy1 = calcpos_pipi(abcd,Kx,Ky);
+xy1 = calcpos(abcd,Kx,Ky,Ks);
+
+
 
 % Plot relation between real and estimated values
 figure(1)
@@ -58,6 +49,7 @@ grid on
 xlabel('Real Beam Position (mm)')
 ylabel('Estimated Beam Position (mm)')
 title('ABCD Linear Aproximation')
+
 
 %% Plot Matrix
 
@@ -86,11 +78,10 @@ for i=1:matrix_size
   xym(1+(i-1)*matrix_size:matrix_size+(i-1)*matrix_size,1) = xm;
 end
 
-
-% Estimating Matrix
+% Estimated Matrix
 
 [abcdm] = pos2abcd(xym,button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos_pipi(abcdm,Kx,Ky); % Calculate position xy1
+xy1m = calcpos_daphine(abcdm,Kx,Ky,Ks); % Calculate position xy1
 
 
 figure(2)%, set(gcf,'position',[100 100 200 400])
@@ -119,11 +110,10 @@ xx = reshape(xx,[],1); % reshape into an array
 yy = reshape(yy,[],1); % reshape into an array
 
 [abcdm] = pos2abcd([xx yy],button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos_pipi(abcdm,Kx,Ky); % Calculate position xy1
+xy1m = calcpos_daphine(abcdm,Kx,Ky,Ks); % Calculate position xy1
 
 x1m = reshape(xy1m(:,1),[],sqrt(length(xx)));
 y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
-
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
