@@ -21,15 +21,26 @@ array_size = 1e4;
 x = linspace(-x_array_length, x_array_length, array_size)';
 y = linspace(-y_array_length, y_array_length, array_size)';
 
-xy = [x y];
+xy = [x y] + 0.1;
 
 % Convert to abcd coordinates
 
-[abcd] = pos2abcd_cross(xy,button_r,chamber_r);
+[abcd] = pos2abcd(xy,button_r,chamber_r);
 
 % Calculate position xy1
 
-xy1 = calcpos_pipi_cross(abcd,Kx,Ky);
+xy1 = calcpos_pipi(abcd,Kx,Ky);
+
+% Relation between real and measured values (and why you cannot use this
+% method
+
+figure(1)
+plot(xy(:,1),xy1(:,1))
+grid on
+xlabel('Real Beam Position (mm)')
+ylabel('Estimated Beam Position (mm)')
+title('ABCD Linear Aproximation')
+axis([-round(max(xy(:,1))) round(max(xy(:,1))) min(xy1(:,1))*0.99 max(xy1(:,1))*1.01])
 
 % Calculate Kx;
 
@@ -38,14 +49,14 @@ Ky = Kx;
 
 % Recalculate position xy1 with correct Kx
 
-xy1 = calcpos_pipi_cross(abcd,Kx,Ky);
+xy1 = calcpos_pipi(abcd,Kx,Ky);
 
 % Plot relation between real and estimated values
 figure(1)
 plot(xy(:,1),xy1(:,1))
 grid on
-xlabel('Real beam position (mm)')
-ylabel('Estimated beam Position (mm)')
+xlabel('Real Beam Position (mm)')
+ylabel('Estimated Beam Position (mm)')
 title('ABCD Linear Aproximation')
 
 %% Plot Matrix
@@ -57,12 +68,12 @@ theta = linspace(0,2*pi); % Chamber draw
 x_chamber = chamber_r*cos(theta);
 y_chamber = chamber_r*sin(theta);
 
-[x_button,y_button] = button_draw(chamber_r,button_r,4,0);
+[x_button,y_button] = button_draw(chamber_r,button_r,4,pi/4);
 
 % Create xy vector matrix
 
 matrix_size = 15;
-x_array_length = chamber_r/sqrt(2)*0.6;
+x_array_length = chamber_r/sqrt(2)*0.2;
 
 xm = linspace(-x_array_length, x_array_length, matrix_size);
 xym=zeros(matrix_size*matrix_size,2);
@@ -75,10 +86,11 @@ for i=1:matrix_size
   xym(1+(i-1)*matrix_size:matrix_size+(i-1)*matrix_size,1) = xm;
 end
 
+
 % Estimating Matrix
 
-[abcdm] = pos2abcd_cross(xym,button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos_pipi_cross(abcdm,Kx,Ky); % Calculate position xy1
+[abcdm] = pos2abcd(xym,button_r,chamber_r); % Convert to abcd coordinates
+xy1m = calcpos_pipi(abcdm,Kx,Ky); % Calculate position xy1
 
 
 figure(2)%, set(gcf,'position',[100 100 200 400])
@@ -106,11 +118,12 @@ xm = linspace(-x_array_length, x_array_length, matrix_size);
 xx = reshape(xx,[],1); % reshape into an array
 yy = reshape(yy,[],1); % reshape into an array
 
-[abcdm] = pos2abcd_cross([xx yy],button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos_pipi_cross(abcdm,Kx,Ky); % Calculate position xy1
+[abcdm] = pos2abcd([xx yy],button_r,chamber_r); % Convert to abcd coordinates
+xy1m = calcpos_pipi(abcdm,Kx,Ky); % Calculate position xy1
 
 x1m = reshape(xy1m(:,1),[],sqrt(length(xx)));
 y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
+
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
