@@ -58,7 +58,7 @@ plot(xy(:,1),xy1(:,1))
 grid on
 xlabel('Real Beam Position (mm)')
 ylabel('Estimated Beam Position (mm)')
-title('ABCD Linear Aproximation')
+title('ABCD Linear Aproximation - \Pi/\Pi')
 axis([min(xy(:,1)) max(xy(:,1)) min(xy1(:,1)) max(xy1(:,1))])
 
 print -depsc 2_1 % plotting figure
@@ -108,7 +108,7 @@ hold off
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
 legend('Real Positions','Calculated Positions','Location','best')
-title('Real x Estimated Beam Position')
+title('Real x Estimated Beam Position - \Pi/\Pi')
 grid on
 
 print -depsc 2_2 % plotting figure
@@ -141,7 +141,7 @@ plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
 axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1)
 axis equal
 legend('Real Positions','Calculated Positions','Location','bestoutside')
-title('Real x Estimated Beam Position')
+title('Real x Estimated Beam Position - \Pi/\Pi')
 grid on
 
 print -depsc 2_3 % plotting figure
@@ -193,7 +193,7 @@ figure(4)
 contourf(xx,yy,xy1m_error); % Plot data
 colorbar;
 grid on
-title('Error Estimation')
+title('Error Estimation - \Pi/\Pi')
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')

@@ -93,7 +93,7 @@ end
 
 % Estimated Matrix
 
-rn = 3; % Set number of recursions
+rn = 5; % Set number of recursions
 
 [abcdm] = pos2abcd(xym,button_r,chamber_r); % Convert to abcd coordinates
 xy1m = calcpos_daphine_recursion(abcdm,Kx,Ky, rn); % Calculate position xy1
@@ -110,7 +110,7 @@ hold off
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
 legend('Real Positions','Calculated Positions','Location','best')
-title('Real x Estimated Beam Position')
+title(['Real x Estimated Beam Position - Da\Phine (' num2str(rn) ' iterations)'])
 grid on
 
 print -depsc 5_2 % plotting figure
@@ -136,14 +136,14 @@ end
 % Estimated Matrix
 
 [abcdm] = pos2abcd(xym,button_r,chamber_r); % Convert to abcd coordinates
-xy1m = calcpos_daphine_recursion(abcdm,Kx,Ky,5); % Calculate position xy1
+xy1m = calcpos_daphine_recursion(abcdm,Kx,Ky,rn); % Calculate position xy1
 
 figure(3)
 plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
 axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1)
 axis equal
 legend('Real Positions','Calculated Positions','Location','bestoutside')
-title('Real x Estimated Beam Position')
+title(['Real x Estimated Beam Position - Da\Phine (' num2str(rn) ' iterations)'])
 grid on
     
 print -depsc 5_3 % plotting figure
@@ -194,7 +194,7 @@ figure(4)
 contourf(xx,yy,xy1m_error); % Plot data
 colorbar;
 grid on
-title('Error Estimation')
+title(['Error Estimation - Da\Phine (' num2str(rn) ' iterations)'])
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')

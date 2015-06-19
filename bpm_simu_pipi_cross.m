@@ -46,7 +46,7 @@ plot(xy(:,1),xy1(:,1))
 grid on
 xlabel('Real Beam Position (mm)')
 ylabel('Estimated Beam Position (mm)')
-title('ABCD Linear Aproximation')
+title('ABCD Linear Aproximation - \Pi/\Pi')
 axis([min(xy(:,1)) max(xy(:,1)) min(xy1(:,1)) max(xy1(:,1))])
 
 %% Plot Matrix
