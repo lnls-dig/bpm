@@ -188,4 +188,4 @@ zlabel('Error')
 %set(gca,'DataAspectRatio',[10 10 1])
 axis equal
 
-print -depsc 4_x4 % plotting figure
+print -depsc 4_4 % plotting figure
