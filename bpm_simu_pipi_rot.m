@@ -23,7 +23,7 @@ y = linspace(-y_array_length, y_array_length, array_size)';
 
 % Rotation Matrix
 
-R = [cos(pi/4) -sin(pi/4); sin(pi/4) cos(pi/4)];
+R = [cos(-pi/4) -sin(-pi/4); sin(-pi/4) cos(-pi/4)];
 
 xy = [x y];
 
