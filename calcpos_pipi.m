@@ -16,7 +16,7 @@ c = abcd(:,3);
 d = abcd(:,4);
 
 
-xy = [log2(sqrt((a.*d)./(b.*c)))*Kx log2(sqrt((a.*b)./(c.*d)))*Ky]; % first equation
+xy = [log2((a.*d)./(b.*c))*Kx log2((a.*b)./(c.*d))*Ky]; % first equation
 
 
 q = 0; % Not implemented yet
