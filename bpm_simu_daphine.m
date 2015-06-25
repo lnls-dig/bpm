@@ -48,8 +48,9 @@ plot(xy(:,1),xy1(:,1))
 grid on
 xlabel('Real Beam Position (mm)')
 ylabel('Estimated Beam Position (mm)')
-title('ABCD Linear Aproximation - Da\Phine (no recursion)')
-axis([min(xy(:,1)) max(xy(:,1)) min(xy1(:,1)) max(xy1(:,1))])
+title('ABCD Linear Aproximation - Da\Phine (no iteration)')
+axis equal
+axis([-x_array_length x_array_length -x_array_length x_array_length])
 
 print -depsc 4_1 % plotting figure
 
@@ -97,7 +98,7 @@ hold off
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
 legend('Real Positions','Calculated Positions','Location','best')
-title('Real x Estimated Beam Position - Da\Phine (no recursion)')
+title('Real x Estimated Beam Position - Da\Phine (no iteration)')
 grid on
 
 print -depsc 4_2 % plotting figure
@@ -107,7 +108,7 @@ print -depsc 4_2 % plotting figure
 % Create xy vector matrix
 
 matrix_size = 15;
-x_array_length = 2; % length in mm
+x_array_length = 0.5; % length in mm
 
 xm = linspace(-x_array_length, x_array_length, matrix_size);
 xym=zeros(matrix_size*matrix_size,2);
@@ -130,7 +131,7 @@ plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
 axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1)
 axis equal
 legend('Real Positions','Calculated Positions','Location','bestoutside')
-title('Real x Estimated Beam Position - Da\Phine (no recursion)')
+title('Real x Estimated Beam Position - Da\Phine (no iteration)')
 grid on
 
 print -depsc 4_3 % plotting figure
@@ -177,11 +178,13 @@ zlabel('Error')
 axis equal
 %}
 
+
 figure(4)
-contourf(xx,yy,xy1m_error); % Plot data
-colorbar;
+contourf(xx,yy,xy1m_error,30); % Plot data
+c = colorbar;
+ylabel(c,'Absolute Error (mm)');
 grid on
-title('Error Estimation - Da\Phine (no recursion)')
+title('Error Estimation - Da\Phine (no iteration)')
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')
@@ -189,3 +192,59 @@ zlabel('Error')
 axis equal
 
 print -depsc 4_4 % plotting figure
+
+% set error boundaries
+
+e_bound = [-25e-4 20e-4]; % in mm
+caxis([e_bound(1) e_bound(2)]) % set boundaries
+
+print -depsc 4_5 % plotting figure
+
+%% Plot for a defined error
+
+err1 = 0.01e-4; % in mm
+err2 = 0.05e-4; % in mm, must be bigger than err1
+figure(6)
+
+% plot contour for err2
+
+err_vector = [-err2 err2]; 
+[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+
+allH = allchild(h);
+valueToHide = err2;
+% "best" method commented due to shortage of time to make it work properly
+% patchValues = cell2mat(get(allH,'UserData'));
+% patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
+% patchesToHide = patchValues > valueToHide;
+% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
+set(allH([true]),'FaceColor','c','FaceAlpha',1); % probably not the best aproach, just made it work
+hold on
+
+% plot contour for err1
+
+err_vector = [-err1 err1]; 
+[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+
+allH = allchild(h);
+valueToHide = err1;
+% "best" method commented due to shortage of time to make it work properly
+% patchValues = cell2mat(get(allH,'UserData'));
+% patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
+% patchesToHide = patchValues > valueToHide;
+% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
+set(allH([true]),'FaceColor','b','FaceAlpha',1); % probably not the best aproach, just made it work
+hold off
+
+
+
+
+ylabel(c,'Absolute Error (mm)');
+grid on
+title(['Error smaller than ' num2str(err1) ' and ' num2str(err2) ' mm - Da\Phine (no iteration)'])
+ylabel('Y (mm)')
+xlabel('X (mm)')
+zlabel('Error')
+axis equal
+
+print -depsc 4_6 % plotting figure

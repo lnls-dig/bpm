@@ -51,7 +51,8 @@ grid on
 xlabel('Real Beam Position (mm)')
 ylabel('Estimated Beam Position (mm)')
 title('ABCD Linear Aproximation - \Pi/\Pi (rot)')
-axis([min(xy(:,1)) max(xy(:,1)) min(xy1(:,1)) max(xy1(:,1))])
+axis equal
+axis([-x_array_length x_array_length round(min(xy1(:,1))) round(max(xy1(:,1)))])
 
 print -depsc 3_1 % plotting figure
 
@@ -119,7 +120,7 @@ print -depsc 3_2 % plotting figure
 % Create xy vector matrix
 
 matrix_size = 15;
-x_array_length = 2; % length in mm
+x_array_length = 0.5; % length in mm
 
 xm = linspace(-x_array_length, x_array_length, matrix_size);
 xym=zeros(matrix_size*matrix_size,2);
@@ -210,9 +211,11 @@ zlabel('Error')
 axis tight
 %}
 
+
 figure(4)
-contourf(xx,yy,xy1m_error); % Plot data
-colorbar;
+contourf(xx,yy,xy1m_error,30); % Plot data
+c = colorbar;
+ylabel(c,'Absolute Error (mm)');
 grid on
 title('Error Estimation - \Pi/\Pi (rot)')
 ylabel('Y (mm)')
@@ -222,3 +225,54 @@ zlabel('Error')
 axis equal
 
 print -depsc 3_4 % plotting figure
+
+% set error boundaries
+
+e_bound = [-25e-4 20e-4]; % in mm
+caxis([e_bound(1) e_bound(2)]) % set boundaries
+
+print -depsc 3_5 % plotting figure
+
+%% Plot for a defined error
+
+err1 = 0.01e-4; % in mm
+err2 = 0.05e-4; % in mm, must be bigger than err1
+figure(6)
+
+% plot contour for err2
+
+err_vector = [-err2 err2]; 
+[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+
+allH = allchild(h);
+valueToHide = err2;
+patchValues = cell2mat(get(allH,'UserData'));
+% patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
+patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
+set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
+set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
+hold on
+
+% plot contour for err1
+
+err_vector = [-err1 err1]; 
+[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+
+allH = allchild(h);
+valueToHide = err1;
+patchValues = cell2mat(get(allH,'UserData'));
+% patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
+patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
+set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
+set(allH([false false false false true]),'FaceColor','b','FaceAlpha',1);
+hold off
+
+ylabel(c,'Absolute Error (mm)');
+grid on
+title(['Error smaller than ' num2str(err1) ' and ' num2str(err2) ' mm - \Pi/\Pi (rot)'])
+ylabel('Y (mm)')
+xlabel('X (mm)')
+zlabel('Error')
+axis equal
+
+print -depsc 3_6 % plotting figure
