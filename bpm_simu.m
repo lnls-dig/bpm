@@ -202,8 +202,8 @@ print -depsc 1_5 % plotting figure
 
 %% Plot for a defined error
 
-err1 = 0.01e-4; % in mm
-err2 = 0.05e-4; % in mm, must be bigger than err1
+err1 = 1e-2; % in mm
+err2 = 5e-2; % in mm, must be bigger than err1
 figure(6)
 
 % plot contour for err2
