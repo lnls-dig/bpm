@@ -170,33 +170,34 @@ yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 %xy1m_error=sqrt(x1m-xx).^2+(y1m-yy).^2);
 xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
-% % Error for x and y
-% xy1m_error_x=x1m-xx;
-% xy1m_error_y=y1m-yy;
-% 
-% figure(7)
-% subplot(2,1,1)
-% contourf(xx,yy,xy1m_error_x,30); % Plot data
-% c = colorbar;
-% ylabel(c,'Absolute Error (mm)');
-% grid on
-% title('Error Estimation for x - \Pi/\Pi')
-% ylabel('Y (mm)')
-% xlabel('X (mm)')
-% zlabel('Error')
-% axis equal
-% 
-% subplot(2,1,2)
-% contourf(xx,yy,xy1m_error_y,30); % Plot data
-% c = colorbar;
-% ylabel(c,'Absolute Error (mm)');
-% grid on
-% title('Error Estimation for y - \Pi/\Pi')
-% ylabel('Y (mm)')
-% xlabel('X (mm)')
-% zlabel('Error')
-% axis equal
+% Error for x and y
+xy1m_error_x=x1m-xx;
+xy1m_error_y=y1m-yy;
 
+figure(7)
+subplot(2,1,1)
+contourf(xx,yy,xy1m_error_x,30); % Plot data
+c = colorbar;
+ylabel(c,'Error (mm)');
+grid on
+title('Error Estimation for x - \Pi/\Pi')
+ylabel('Y (mm)')
+xlabel('X (mm)')
+zlabel('Error')
+axis equal
+
+subplot(2,1,2)
+contourf(xx,yy,xy1m_error_y,30); % Plot data
+c = colorbar;
+ylabel(c,'Error (mm)');
+grid on
+title('Error Estimation for y - \Pi/\Pi')
+ylabel('Y (mm)')
+xlabel('X (mm)')
+zlabel('Error')
+axis equal
+
+print -depsc 2_7 % plotting figure
 
 % Plotting the surface
 
