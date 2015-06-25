@@ -148,7 +148,7 @@ grid on
     
 print -depsc 5_3 % plotting figure
 
-%% Plot error acording to pipe
+%% Plot error acording to pipe (absolute, x and y)
 
 matrix_size = 50;
 
@@ -196,7 +196,7 @@ contourf(xx,yy,xy1m_error,30); % Plot data
 c = colorbar;
 ylabel(c,'Absolute Error (mm)');
 grid on
-title(['Error Estimation - Da\Phine (' num2str(rn) ' iterations)'])
+title(['Absolute Error Estimation - Da\Phine (' num2str(rn) ' iterations)'])
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')
@@ -234,24 +234,24 @@ print -depsc 5_5 % plotting figure
 % set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
 % set(allH([true]),'FaceColor','b','FaceAlpha',1); % probably not the best aproach, just made it work
 
-err1 = 0.01e-4; % in mm
-err2 = 0.05e-4; % in mm, must be bigger than err1
+err1 = 1e-4; % in mm
+err2 = 5e-4; % in mm, must be bigger than err1
 figure(6)
 
-% plot contour for err2
-
-err_vector = [-err2 err2]; 
-[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
-
-allH = allchild(h);
-valueToHide = err2;
-% "best" method commented due to shortage of time to make it work properly
-% patchValues = cell2mat(get(allH,'UserData'));
-% patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
-% patchesToHide = patchValues > valueToHide;
-% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
-set(allH([false;true;true]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
-set(allH([true;false;false]),'FaceColor','c','FaceAlpha',1);
+% % plot contour for err2
+% 
+% err_vector = [-err2 err2]; 
+% [C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+% 
+% allH = allchild(h);
+% valueToHide = err2;
+% % "best" method commented due to shortage of time to make it work properly
+% % patchValues = cell2mat(get(allH,'UserData'));
+% % patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
+% % patchesToHide = patchValues > valueToHide;
+% % set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
+% set(allH([false;true;true]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
+% set(allH([true;false;false]),'FaceColor','c','FaceAlpha',1);
 hold on
 
 % plot contour for err1
@@ -266,14 +266,16 @@ valueToHide = err1;
 % patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
 % patchesToHide = patchValues > valueToHide;
 % set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
-set(allH([false;true;true]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
-set(allH([true;false;false]),'FaceColor','b','FaceAlpha',1);
+% set(allH([false;true;true]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
+% set(allH([true;false;false]),'FaceColor','b','FaceAlpha',1);
+set(allH([false]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
+set(allH([true]),'FaceColor','b','FaceAlpha',1);
 hold off
 
 
 ylabel(c,'Absolute Error (mm)');
 grid on
-title(['Error smaller than ' num2str(err1) ' and ' num2str(err2) ' mm - Da\Phine (' num2str(rn) ' iterations)'])
+title(['Error smaller than ' num2str(err1*1e6) ' nm - Da\Phine (' num2str(rn) ' iterations)'])
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')

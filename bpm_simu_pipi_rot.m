@@ -157,7 +157,7 @@ grid on
 
 print -depsc 3_3 % plotting figure
 
-%% Plot error acording to pipe
+%% Plot error acording to pipe (absolute, x and y)
 
 matrix_size = 50;
 
@@ -217,7 +217,7 @@ contourf(xx,yy,xy1m_error,30); % Plot data
 c = colorbar;
 ylabel(c,'Absolute Error (mm)');
 grid on
-title('Error Estimation - \Pi/\Pi (rot)')
+title('Absolute Error Estimation - \Pi/\Pi (rot)')
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')
@@ -229,28 +229,28 @@ print -depsc 3_4 % plotting figure
 % set error boundaries
 
 e_bound = [-25e-4 20e-4]; % in mm
-caxis([e_bound(1) e_bound(2)]) % set boundaries
+caxis([e_bound(1) e_bound(2)]); % set boundaries
 
 print -depsc 3_5 % plotting figure
 
 %% Plot for a defined error
 
-err1 = 0.01e-4; % in mm
-err2 = 0.05e-4; % in mm, must be bigger than err1
+err1 = 1e-4; % in mm
+err2 = 5e-4; % in mm, must be bigger than err1
 figure(6)
 
-% plot contour for err2
-
-err_vector = [-err2 err2]; 
-[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
-
-allH = allchild(h);
-valueToHide = err2;
-patchValues = cell2mat(get(allH,'UserData'));
+% % plot contour for err2
+% 
+% err_vector = [-err2 err2]; 
+% [C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+% 
+% allH = allchild(h);
+% valueToHide = err2;
+% patchValues = cell2mat(get(allH,'UserData'));
+% % patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
 % patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
-set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
+% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
+% set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
 hold on
 
 % plot contour for err1
@@ -269,7 +269,7 @@ hold off
 
 ylabel(c,'Absolute Error (mm)');
 grid on
-title(['Error smaller than ' num2str(err1) ' and ' num2str(err2) ' mm - \Pi/\Pi (rot)'])
+title(['Error smaller than ' num2str(err1*1e6) ' nm - \Pi/\Pi (rot)'])
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')

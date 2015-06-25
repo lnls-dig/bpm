@@ -135,7 +135,7 @@ grid on
 
 print -depsc 1_3 % plotting figure
 
-%% Plot error acording to pipe
+%% Plot error acording to pipe (absolute, x and y)
 
 matrix_size = 50;
 
@@ -154,8 +154,39 @@ y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
+% Absolute error
 %xy1m_error=sqrt(x1m-xx).^2+(y1m-yy).^2);
 xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
+
+
+% % Error for x and y
+% xy1m_error_x=x1m-xx;
+% xy1m_error_y=y1m-yy;
+% 
+% figure(7)
+% subplot(2,1,1)
+% contourf(xx,yy,xy1m_error_x,30); % Plot data
+% c = colorbar;
+% ylabel(c,'Absolute Error (mm)');
+% grid on
+% title('Error Estimation for x - \Delta/\Sigma')
+% ylabel('Y (mm)')
+% xlabel('X (mm)')
+% zlabel('Error')
+% axis equal
+% 
+% subplot(2,1,2)
+% contourf(xx,yy,xy1m_error_y,30); % Plot data
+% c = colorbar;
+% ylabel(c,'Absolute Error (mm)');
+% grid on
+% title('Error Estimation for y - \Delta/\Sigma')
+% ylabel('Y (mm)')
+% xlabel('X (mm)')
+% zlabel('Error')
+% axis equal
+
+
 
 % Plotting the surface
 
@@ -183,7 +214,7 @@ contourf(xx,yy,xy1m_error,30); % Plot data
 c = colorbar;
 ylabel(c,'Absolute Error (mm)');
 grid on
-title('Error Estimation - \Delta/\Sigma')
+title('Absolute Error Estimation - \Delta/\Sigma')
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')
@@ -195,29 +226,29 @@ print -depsc 1_4 % plotting figure
 % set error boundaries
 
 e_bound = [-25e-4 20e-4]; % in mm
-caxis([e_bound(1) e_bound(2)]) % set boundaries
+caxis([e_bound(1) e_bound(2)]); % set boundaries
 
 print -depsc 1_5 % plotting figure
 
 
 %% Plot for a defined error
 
-err1 = 1e-2; % in mm
-err2 = 5e-2; % in mm, must be bigger than err1
+err1 = 1e-4; % in mm
+% err2 = 5e-4; % in mm, must be bigger than err1
 figure(6)
 
-% plot contour for err2
-
-err_vector = [-err2 err2]; 
-[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
-
-allH = allchild(h);
-valueToHide = err2;
-patchValues = cell2mat(get(allH,'UserData'));
+% % plot contour for err2
+% 
+% err_vector = [-err2 err2]; 
+% [C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+% 
+% allH = allchild(h);
+% valueToHide = err2;
+% patchValues = cell2mat(get(allH,'UserData'));
+% % patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
 % patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
-set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
+% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
+% set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
 hold on
 
 % plot contour for err1
@@ -236,7 +267,7 @@ hold off
 
 ylabel(c,'Absolute Error (mm)');
 grid on
-title(['Error smaller than ' num2str(err1) ' and ' num2str(err2) ' mm - \Delta/\Sigma'])
+title(['Error smaller than ' num2str(err1*1e6) ' nm - \Delta/\Sigma'])
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Error')
