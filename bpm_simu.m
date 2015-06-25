@@ -154,7 +154,7 @@ y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
-% Absolute error
+% Inaccuracy
 %xy1m_error=sqrt(x1m-xx).^2+(y1m-yy).^2);
 xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
@@ -167,23 +167,23 @@ figure(7)
 subplot(2,1,1)
 contourf(xx,yy,xy1m_error_x,30); % Plot data
 c = colorbar;
-ylabel(c,'Error (mm)');
+ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Error Estimation for x - \Delta/\Sigma')
+title('Inaccuracy Estimation for x - \Delta/\Sigma')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 axis equal
 
 subplot(2,1,2)
 contourf(xx,yy,xy1m_error_y,30); % Plot data
 c = colorbar;
-ylabel(c,'Error (mm)');
+ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Error Estimation for y - \Delta/\Sigma')
+title('Inaccuracy Estimation for y - \Delta/\Sigma')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 axis equal
 
 print -depsc 1_7 % plotting figure
@@ -200,10 +200,10 @@ for i=1:size(x_button,1)
 end
 hold off
 grid on
-title('Error Estimation')
+title('Inaccuracy Estimation')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 %set(gca,'DataAspectRatio',[10 10 1])
 axis equal
 %}
@@ -212,12 +212,12 @@ axis equal
 figure(4)
 contourf(xx,yy,xy1m_error,30); % Plot data
 c = colorbar;
-ylabel(c,'Absolute Error (mm)');
+ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Absolute Error Estimation - \Delta/\Sigma')
+title('Inaccuracy Estimation - \Delta/\Sigma')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 %set(gca,'DataAspectRatio',[10 10 1])
 axis equal
 
@@ -265,12 +265,12 @@ set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
 set(allH([false false false false true]),'FaceColor','b','FaceAlpha',1);
 hold off
 
-ylabel(c,'Absolute Error (mm)');
+ylabel(c,'Inaccuracy (mm)');
 grid on
-title(['Error smaller than ' num2str(err1*1e6) ' nm - \Delta/\Sigma'])
+title(['Inaccuracy smaller than ' num2str(err1*1e6) ' nm - \Delta/\Sigma'])
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 axis equal
 
 print -depsc 1_6 % plotting figure
