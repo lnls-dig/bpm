@@ -1,6 +1,8 @@
 close all
 clear all
 
+big_fonts = 1; % set fonts to big size; 
+
 %% Estimate real and measured beam positions
 
 % Parameters
@@ -44,9 +46,17 @@ xy1 = calcpos(abcd,Kx,Ky,Ks);
 figure(1)
 plot(xy(:,1),xy1(:,1))
 grid on
-xlabel('Real Beam Position (mm)')
-ylabel('Estimated Beam Position (mm)')
-title('ABCD Linear Aproximation - \Delta/\Sigma')
+xl = xlabel('Real Beam Position (mm)');
+yl = ylabel('Estimated Beam Position (mm)');
+tl = title('ABCD Linear Aproximation - \Delta/\Sigma');
+
+if big_fonts 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+end
+
 axis equal
 axis([-x_array_length x_array_length -x_array_length x_array_length])
 
@@ -94,11 +104,21 @@ for i=1:size(x_button,1)
     plot(x_button(i,:),y_button(i,:),'k.')
 end
 hold off
-axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
+% axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
-legend('Real Positions','Calculated Positions','Location','best')
-title('Real x Estimated Beam Position - \Delta/\Sigma')
+ll = legend('Real Positions','Calculated Positions','Location','best');
+tl = title('Real x Estimated Beam Position - \Delta/\Sigma');
+xl = xlabel('Real Beam Position (mm)');
+yl = ylabel('Estimated Beam Position (mm)');
 grid on
+
+if big_fonts 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    set(ll,'FontSize',15)
+end
 
 print -depsc 1_2 % plotting figure
 
@@ -129,9 +149,23 @@ figure(3)
 plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
 axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1)
 axis equal
-legend('Real Positions','Calculated Positions','Location','bestoutside')
-title('Real x Estimated Beam Position - \Delta/\Sigma')
+ll = legend('Real Positions','Calculated Positions','Location','bestoutside');
+tl = title('Real x Estimated Beam Position - \Delta/\Sigma');
+xl = xlabel('Real Beam Position (mm)');
+yl = ylabel('Estimated Beam Position (mm)');
 grid on
+
+if big_fonts
+    tl = title({'Real x Estimated';'Beam Position - \Delta/\Sigma'});
+    
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    set(ll,'FontSize',15);
+    set(ll,'position',[0.3192 0.015 0.3973 0.1515]);
+    set(gca,'position',[0.1300 0.2972 0.7750 0.4838]);
+end
 
 print -depsc 1_3 % plotting figure
 
@@ -169,22 +203,37 @@ contourf(xx,yy,xy1m_error_x,30); % Plot data
 c = colorbar;
 ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Inaccuracy Estimation for x - \Delta/\Sigma')
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Inaccuracy')
+tl = title('Inaccuracy Estimation for x - \Delta/\Sigma');
+yl = ylabel('Y (mm)');
+xl = xlabel('X (mm)');
+zlabel('Inaccuracy');
 axis equal
+
+if 0
+    tl = title({'Inaccuracy Estimation';'for x - \Delta/\Sigma'});
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+end
 
 subplot(2,1,2)
 contourf(xx,yy,xy1m_error_y,30); % Plot data
 c = colorbar;
 ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Inaccuracy Estimation for y - \Delta/\Sigma')
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Inaccuracy')
+tl = title('Inaccuracy Estimation for y - \Delta/\Sigma');
+yl = ylabel('Y (mm)');
+xl = xlabel('X (mm)');
+zlabel('Inaccuracy');
 axis equal
+
+if 0 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+end
 
 print -depsc 1_7 % plotting figure
 
@@ -200,9 +249,9 @@ for i=1:size(x_button,1)
 end
 hold off
 grid on
-title('Inaccuracy Estimation')
-ylabel('Y (mm)')
-xlabel('X (mm)')
+tl = title('Inaccuracy Estimation')
+yl = ylabel('Y (mm)')
+xl = xlabel('X (mm)')
 zlabel('Inaccuracy')
 %set(gca,'DataAspectRatio',[10 10 1])
 axis equal
@@ -211,22 +260,41 @@ axis equal
 
 figure(4)
 contourf(xx,yy,xy1m_error,30); % Plot data
-c = colorbar;
-ylabel(c,'Inaccuracy (mm)');
+c1 = colorbar;
+e_bound = caxis;
+ylabel(c1,'Inaccuracy (mm)');
 grid on
-title('Inaccuracy Estimation - \Delta/\Sigma')
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Inaccuracy')
+tl = title('Inaccuracy Estimation - \Delta/\Sigma');
+yl = ylabel('Y (mm)');
+xl = xlabel('X (mm)');
+% zlabel('Inaccuracy');
 %set(gca,'DataAspectRatio',[10 10 1])
 axis equal
+
+if big_fonts
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    ylabel(c1,'Inaccuracy (mm)','FontSize',20);
+end
 
 print -depsc 1_4 % plotting figure
 
 % set error boundaries
 
-e_bound = [-25e-4 20e-4]; % in mm
+e_bound = [-25e-4 20e-4]; % in nm
 caxis([e_bound(1) e_bound(2)]); % set boundaries
+
+if big_fonts 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    ylabel(c1,'Inaccuracy (nm)','FontSize',20);
+    set(c1,'YTick',[e_bound(1) 0 e_bound(2)],'YTickLabel',{num2str(e_bound(1)*1e6) ;'0'; num2str(e_bound(2)*1e6)})
+    
+end
 
 print -depsc 1_5 % plotting figure
 
@@ -267,11 +335,18 @@ hold off
 
 ylabel(c,'Inaccuracy (mm)');
 grid on
-title(['Inaccuracy smaller than ' num2str(err1*1e6) ' nm - \Delta/\Sigma'])
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Inaccuracy')
+tl = title(['Inaccuracy smaller than ' num2str(err1*1e6) ' nm - \Delta/\Sigma']);
+yl = ylabel('Y (mm)');
+xl = xlabel('X (mm)');
+zlabel('Inaccuracy');
 axis equal
+
+if big_fonts 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+end
 
 print -depsc 1_6 % plotting figure
 

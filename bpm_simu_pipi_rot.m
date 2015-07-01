@@ -1,6 +1,8 @@
 close all
 clear all
 
+big_fonts = 1; % set fonts to big size; 
+
 %% Estimate real and measured beam positions
 
 % Parameters
@@ -18,7 +20,7 @@ array_size = 1e4;
 
 % Create xy vector
 
-x = linspace(-x_array_length, x_array_length, array_size)';
+x = linspace(-x_array_length/sin(pi/4), x_array_length/sin(pi/4), array_size)';
 y = linspace(-y_array_length, y_array_length, array_size)';
 % Rotation Matrix
 
@@ -26,6 +28,8 @@ R = [cos(-pi/4) -sin(-pi/4); sin(-pi/4) cos(-pi/4)];
 
 xy = [x y];
 
+xy = R*xy';
+xy = xy';
 
 % Convert to abcd coordinates
 
@@ -48,11 +52,19 @@ xy1 = calcpos_pipi_cross(abcd,Kx,Ky);
 figure(1)
 plot(xy(:,1),xy1(:,1))
 grid on
-xlabel('Real Beam Position (mm)')
-ylabel('Estimated Beam Position (mm)')
-title('ABCD Linear Aproximation - \Pi/\Pi (rot)')
+xl = xlabel('Real Beam Position (mm)');
+yl = ylabel('Estimated Beam Position (mm)');
+tl = title('ABCD Linear Aproximation - \Pi/\Pi ("Cross")');
 axis equal
-axis([-x_array_length x_array_length round(min(xy1(:,1))) round(max(xy1(:,1)))])
+% axis([-x_array_length x_array_length round(min(xy1(:,1))) round(max(xy1(:,1)))])
+axis([-x_array_length x_array_length -x_array_length x_array_length])
+
+if big_fonts 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+end
 
 print -depsc 3_1 % plotting figure
 
@@ -109,9 +121,19 @@ end
 hold off
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
-legend('Real Positions','Calculated Positions','Location','best')
-title('Real x Estimated Beam Position - \Pi/\Pi (rot)')
+ll = legend('Real Positions','Calculated Positions','Location','best');
+tl = title({'Real x Estimated';'Beam Position - \Pi/\Pi ("Cross")'});
+xl = xlabel('Real Beam Position (mm)');
+yl = ylabel('Estimated Beam Position (mm)');
 grid on
+
+if big_fonts 
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    set(ll,'FontSize',15)
+end
 
 print -depsc 3_2 % plotting figure
 
@@ -151,13 +173,28 @@ figure(3)
 plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
 axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1*sqrt(2))
 axis equal
-legend('Real Positions','Calculated Positions','Location','bestoutside')
-title('Real x Estimated Beam Position - \Pi/\Pi (rot)')
+ll = legend('Real Positions','Calculated Positions','Location','bestoutside');
+tl = title('Real x Estimated Beam Position - \Pi/\Pi ("Cross")');
+xl = xlabel('Real Beam Position (mm)');
+yl = ylabel('Estimated Beam Position (mm)');
 grid on
+
+if big_fonts
+    tl = title({'Real x Estimated';'Beam Position - \Pi/\Pi ("Cross")'});
+    
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    set(ll,'FontSize',15);
+    set(ll,'position',[0.3192 0.015 0.3973 0.1515]);
+    set(gca,'position',[0.1300 0.2972 0.7750 0.4838]);
+
+end
 
 print -depsc 3_3 % plotting figure
 
-%% Plot error acording to pipe (absolute, x and y)
+%% Plot Inaccuracy acording to pipe (absolute, x and y)
 
 matrix_size = 50;
 
@@ -188,34 +225,34 @@ y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
-%xy1m_error=sqrt(x1m-xx).^2+(y1m-yy).^2);
-xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
+%xy1m_Inaccuracy=sqrt(x1m-xx).^2+(y1m-yy).^2);
+xy1m_Inaccuracy=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
-% Error for x and y
-xy1m_error_x=x1m-xx;
-xy1m_error_y=y1m-yy;
+% Inaccuracy for x and y
+xy1m_Inaccuracy_x=x1m-xx;
+xy1m_Inaccuracy_y=y1m-yy;
 
 figure(7)
 subplot(2,1,1)
-contourf(xx,yy,xy1m_error_x,30); % Plot data
+contourf(xx,yy,xy1m_Inaccuracy_x,30); % Plot data
 c = colorbar;
-ylabel(c,'Error (mm)');
+ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Error Estimation for x - \Pi/\Pi (rot)')
+title('Inaccuracy Estimation for x - \Pi/\Pi ("Cross")')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 axis equal
 
 subplot(2,1,2)
-contourf(xx,yy,xy1m_error_y,30); % Plot data
+contourf(xx,yy,xy1m_Inaccuracy_y,30); % Plot data
 c = colorbar;
-ylabel(c,'Error (mm)');
+ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Error Estimation for y - \Pi/\Pi (rot)')
+title('Inaccuracy Estimation for y - \Pi/\Pi ("Cross")')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 axis equal
 
 print -depsc 3_7 % plotting figure
@@ -224,7 +261,7 @@ print -depsc 3_7 % plotting figure
 
 %{
 figure(4)
-surf(xx,yy,xy1m_error); % Plot data
+surf(xx,yy,xy1m_Inaccuracy); % Plot data
 hold on
 plot(x_chamber,y_chamber,'k--') % Plot draws
 for i=1:size(x_button,1)
@@ -232,37 +269,51 @@ for i=1:size(x_button,1)
 end
 hold off
 grid on
-title('Error Estimation')
+title('Inaccuracy Estimation')
 ylabel('Y (mm)')
 xlabel('X (mm)')
-zlabel('Error')
+zlabel('Inaccuracy')
 %set(gca,'DataAspectRatio',[10 10 1])
 axis tight
 %}
 
 
 figure(4)
-contourf(xx,yy,xy1m_error,30); % Plot data
+contourf(xx,yy,xy1m_Inaccuracy,30); % Plot data
 c = colorbar;
-ylabel(c,'Absolute Error (mm)');
+e_bound = caxis;
+ylabel(c,'Absolute Inaccuracy (mm)');
 grid on
-title('Absolute Error Estimation - \Pi/\Pi (rot)')
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Error')
+tl = title('Absolute Inaccuracy Estimation - \Pi/\Pi ("Cross")');
+yl = ylabel('Y (mm)');
+xl = xlabel('X (mm)');
 %set(gca,'DataAspectRatio',[10 10 1])
 axis equal
 
+if big_fonts
+    tl = title({'Absolute Inaccuracy Estimation';'\Pi/\Pi ("Cross")'});
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+    ylabel(c,'Inaccuracy (mm)','FontSize',20);
+end
+
 print -depsc 3_4 % plotting figure
 
-% set error boundaries
+% set Inaccuracy boundaries
 
-e_bound = [-25e-4 20e-4]; % in mm
+e_bound = [-25e-4 20e-4]; % in nm
 caxis([e_bound(1) e_bound(2)]); % set boundaries
+
+if big_fonts
+    set(c,'YTick',[e_bound(1) 0 e_bound(2)],'YTickLabel',{num2str(e_bound(1)*1e6) ;'0'; num2str(e_bound(2)*1e6)});
+    ylabel(c,'Inaccuracy (nm)','FontSize',20);
+end
 
 print -depsc 3_5 % plotting figure
 
-%% Plot for a defined error
+%% Plot for a defined Inaccuracy
 
 err1 = 1e-4; % in mm
 err2 = 5e-4; % in mm, must be bigger than err1
@@ -271,7 +322,7 @@ figure(6)
 % % plot contour for err2
 % 
 % err_vector = [-err2 err2]; 
-% [C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+% [C,h] = contourf(xx,yy,xy1m_Inaccuracy,err_vector); % Plot data
 % 
 % allH = allchild(h);
 % valueToHide = err2;
@@ -285,7 +336,7 @@ hold on
 % plot contour for err1
 
 err_vector = [-err1 err1]; 
-[C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
+[C,h] = contourf(xx,yy,xy1m_Inaccuracy,err_vector); % Plot data
 
 allH = allchild(h);
 valueToHide = err1;
@@ -296,12 +347,19 @@ set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
 set(allH([false false false false true]),'FaceColor','b','FaceAlpha',1);
 hold off
 
-ylabel(c,'Absolute Error (mm)');
+ylabel(c,'Absolute Inaccuracy (mm)');
 grid on
-title(['Error smaller than ' num2str(err1*1e6) ' nm - \Pi/\Pi (rot)'])
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Error')
+tl = title(['Inaccuracy smaller than ' num2str(err1*1e6) ' nm - \Pi/\Pi ("Cross")']);
+yl = ylabel('Y (mm)');
+xl = xlabel('X (mm)');
 axis equal
+
+if big_fonts 
+    tl = title({['Inaccuracy smaller than ' num2str(err1*1e6) ' nm'];['\Pi/\Pi ("Cross")']});
+    set(gca,'FontSize', 24);
+    set(xl,'FontSize', 20);
+    set(yl,'FontSize', 20);
+    set(tl,'FontSize', 24);
+end
 
 print -depsc 3_6 % plotting figure
