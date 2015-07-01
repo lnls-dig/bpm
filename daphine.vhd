@@ -1,12 +1,12 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.std_numeric.all;
 
 entity daphine is
   port ( a,b,c,d : in real;
          x,y :out real );
 
 end entity
-
 
 architecture daphine_arch of daphine is
   begin

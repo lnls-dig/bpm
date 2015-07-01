@@ -189,7 +189,6 @@ xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
 % Inaccuracy
-%xy1m_error=sqrt(x1m-xx).^2+(y1m-yy).^2);
 xy1m_error=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
 
@@ -239,25 +238,6 @@ print -depsc 1_7 % plotting figure
 
 % Plotting the surface
 
-%{
-figure(4)
-surf(xx,yy,xy1m_error); % Plot data
-hold on
-plot(x_chamber,y_chamber,'k--') % Plot draws
-for i=1:size(x_button,1)
-    plot(x_button(i,:),y_button(i,:),'k.')
-end
-hold off
-grid on
-tl = title('Inaccuracy Estimation')
-yl = ylabel('Y (mm)')
-xl = xlabel('X (mm)')
-zlabel('Inaccuracy')
-%set(gca,'DataAspectRatio',[10 10 1])
-axis equal
-%}
-
-
 figure(4)
 contourf(xx,yy,xy1m_error,30); % Plot data
 c1 = colorbar;
@@ -305,18 +285,6 @@ err1 = 1e-4; % in mm
 % err2 = 5e-4; % in mm, must be bigger than err1
 figure(6)
 
-% % plot contour for err2
-% 
-% err_vector = [-err2 err2]; 
-% [C,h] = contourf(xx,yy,xy1m_error,err_vector); % Plot data
-% 
-% allH = allchild(h);
-% valueToHide = err2;
-% patchValues = cell2mat(get(allH,'UserData'));
-% % patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-% patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
-% set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
 hold on
 
 % plot contour for err1
@@ -327,7 +295,6 @@ err_vector = [-err1 err1];
 allH = allchild(h);
 valueToHide = err1;
 patchValues = cell2mat(get(allH,'UserData'));
-% patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
 patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
 set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
 set(allH([false false false false true]),'FaceColor','b','FaceAlpha',1);

@@ -38,15 +38,6 @@ d = abcdm(:,4);
 u = 0.5*(((a-c)./(a+c))+((d-b)./(d+b)));
 v = 0.5*(((a-c)./(a+c))-((d-b)./(d+b)));
 
-%{
-% Plot relation between real and estimated values
-figure(1)
-plot(xy(:,1),xy1(:,1))
-grid on
-xl = xlabel('Real Beam Position (mm)')
-yl = ylabel('Estimated Beam Position (mm)')
-tl = title('ABCD Linear Aproximation')
-%}
 
 % Calculating the K parameters using non-linear regression
 
@@ -193,7 +184,6 @@ y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
-%xy1m_Inaccuracy=sqrt(x1m-xx).^2+(y1m-yy).^2);
 xy1m_Inaccuracy=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
 % Inaccuracy for x and y
@@ -226,25 +216,6 @@ axis equal
 print -depsc 5_7 % plotting figure
 
 % Plotting the surface
-
-%{
-figure(4)
-surf(xx,yy,xy1m_Inaccuracy); % Plot data
-hold on
-plot(x_chamber,y_chamber,'k--') % Plot draws
-for i=1:size(x_button,1)
-    plot(x_button(i,:),y_button(i,:),'k.')
-end
-hold off
-grid on
-tl = title('Inaccuracy Estimation')
-yl = ylabel('Y (mm)')
-xl = xlabel('X (mm)')
-zlabel('Inaccuracy')
-%set(gca,'DataAspectRatio',[10 10 1])
-axis equal
-%}
-
 
 figure(4)
 contourf(xx,yy,xy1m_Inaccuracy,30); % Plot data
@@ -285,43 +256,10 @@ print -depsc 5_5 % plotting figure
 
 %% Plot for a defined Inaccuracy
 
-% err = 0.01e-4; % in mm
-% 
-% figure(6)
-% 
-% err_vector = [-err err]; 
-% 
-% [C,h] = contourf(xx,yy,xy1m_Inaccuracy,err_vector); % Plot data
-% 
-% allH = allchild(h);
-% valueToHide = err;
-
-% "best" method commented due to shortage of time to make it work properly
-
-% patchValues = cell2mat(get(allH,'UserData'));
-% patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
-% patchesToHide = patchValues > valueToHide;
-% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
-% set(allH([true]),'FaceColor','b','FaceAlpha',1); % probably not the best aproach, just made it work
-
 err1 = 1e-4; % in mm
 err2 = 5e-4; % in mm, must be bigger than err1
 figure(6)
 
-% % plot contour for err2
-% 
-% err_vector = [-err2 err2]; 
-% [C,h] = contourf(xx,yy,xy1m_Inaccuracy,err_vector); % Plot data
-% 
-% allH = allchild(h);
-% valueToHide = err2;
-% % "best" method commented due to shortage of time to make it work properly
-% % patchValues = cell2mat(get(allH,'UserData'));
-% % patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
-% % patchesToHide = patchValues > valueToHide;
-% % set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
-% set(allH([false;true;true]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
-% set(allH([true;false;false]),'FaceColor','c','FaceAlpha',1);
 hold on
 
 % plot contour for err1
@@ -331,14 +269,7 @@ err_vector = [-err1 err1];
 
 allH = allchild(h);
 valueToHide = err1;
-% "best" method commented due to shortage of time to make it work properly
-% patchValues = cell2mat(get(allH,'UserData'));
-% patchesToHide = abs(patchValues - valueToHide) > 100*eps(valueToHide); %
-% patchesToHide = patchValues > valueToHide;
-% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',0);
-% set(allH([false;true;true]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
-% set(allH([true;false;false]),'FaceColor','b','FaceAlpha',1);
-set(allH([false]),'FaceColor','w','FaceAlpha',0); % probably not the best aproach, just made it work
+set(allH([false]),'FaceColor','w','FaceAlpha',0);
 set(allH([true]),'FaceColor','b','FaceAlpha',1);
 hold off
 

@@ -22,6 +22,7 @@ array_size = 1e4;
 
 x = linspace(-x_array_length/sin(pi/4), x_array_length/sin(pi/4), array_size)';
 y = linspace(-y_array_length, y_array_length, array_size)';
+
 % Rotation Matrix
 
 R = [cos(-pi/4) -sin(-pi/4); sin(-pi/4) cos(-pi/4)];
@@ -225,7 +226,6 @@ y1m = reshape(xy1m(:,2),[],sqrt(length(yy)));
 xx = reshape(xx,[],sqrt(length(xx))); % reshape back into a matrix
 yy = reshape(yy,[],sqrt(length(yy))); % reshape back into a matrix
 
-%xy1m_Inaccuracy=sqrt(x1m-xx).^2+(y1m-yy).^2);
 xy1m_Inaccuracy=sqrt(x1m.^2+y1m.^2)-sqrt(yy.^2+xx.^2);
 
 % Inaccuracy for x and y
@@ -259,25 +259,6 @@ print -depsc 3_7 % plotting figure
 
 % Plotting the surface
 
-%{
-figure(4)
-surf(xx,yy,xy1m_Inaccuracy); % Plot data
-hold on
-plot(x_chamber,y_chamber,'k--') % Plot draws
-for i=1:size(x_button,1)
-    plot(x_button(i,:),y_button(i,:),'k.')
-end
-hold off
-grid on
-title('Inaccuracy Estimation')
-ylabel('Y (mm)')
-xlabel('X (mm)')
-zlabel('Inaccuracy')
-%set(gca,'DataAspectRatio',[10 10 1])
-axis tight
-%}
-
-
 figure(4)
 contourf(xx,yy,xy1m_Inaccuracy,30); % Plot data
 c = colorbar;
@@ -287,7 +268,6 @@ grid on
 tl = title('Absolute Inaccuracy Estimation - \Pi/\Pi ("Cross")');
 yl = ylabel('Y (mm)');
 xl = xlabel('X (mm)');
-%set(gca,'DataAspectRatio',[10 10 1])
 axis equal
 
 if big_fonts
@@ -319,18 +299,6 @@ err1 = 1e-4; % in mm
 err2 = 5e-4; % in mm, must be bigger than err1
 figure(6)
 
-% % plot contour for err2
-% 
-% err_vector = [-err2 err2]; 
-% [C,h] = contourf(xx,yy,xy1m_Inaccuracy,err_vector); % Plot data
-% 
-% allH = allchild(h);
-% valueToHide = err2;
-% patchValues = cell2mat(get(allH,'UserData'));
-% % patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-% patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
-% set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
-% set(allH([false false false false true]),'FaceColor','c','FaceAlpha',1);
 hold on
 
 % plot contour for err1
@@ -341,7 +309,6 @@ err_vector = [-err1 err1];
 allH = allchild(h);
 valueToHide = err1;
 patchValues = cell2mat(get(allH,'UserData'));
-% patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
 patchesToHide = abs(patchValues - valueToHide) < 100*eps(valueToHide);
 set(allH(patchesToHide),'FaceColor','w','FaceAlpha',1);
 set(allH([false false false false true]),'FaceColor','b','FaceAlpha',1);
