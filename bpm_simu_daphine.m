@@ -50,12 +50,12 @@ plot(xy(:,1),xy1(:,1))
 grid on
 xl = xlabel('Real Beam Position (mm)');
 yl = ylabel('Estimated Beam Position (mm)');
-tl = title('ABCD Linear Aproximation - Da\Phine (no iteration)');
+tl = title('ABCD Linear Aproximation - \partial\Sigma/\Delta (no iteration)');
 axis equal
 axis([-x_array_length x_array_length -x_array_length x_array_length])
 
 if big_fonts 
-    tl = title({'ABCD Linear Aproximation';'Da\Phine (no iteration)'});
+    tl = title({'ABCD Linear Aproximation';'\partial\Sigma/\Delta (no iteration)'});
     set(gca,'FontSize', 24);
     set(xl,'FontSize', 20);
     set(yl,'FontSize', 20);
@@ -108,7 +108,7 @@ hold off
 axis([-chamber_r chamber_r -chamber_r chamber_r]*1.1)
 axis equal
 ll = legend('Real Positions','Calculated Positions','Location','best');
-tl = title({'Real x Estimated Beam Position';'Da\Phine (no iteration)'});
+tl = title({'Real x Estimated Beam Position';'\partial\Sigma/\Delta (no iteration)'});
 xl = xlabel('Real Beam Position (mm)');
 yl = ylabel('Estimated Beam Position (mm)');
 grid on
@@ -151,13 +151,13 @@ plot(xym(:,1),xym(:,2),'o',xy1m(:,1),xy1m(:,2),'r*') % Plot data
 axis([-x_array_length x_array_length -x_array_length x_array_length]*1.1)
 axis equal
 ll = legend('Real Positions','Calculated Positions','Location','bestoutside');
-tl = title('Real x Estimated Beam Position - Da\Phine (no iteration)');
+tl = title('Real x Estimated Beam Position - \partial\Sigma/\Delta (no iteration)');
 xl = xlabel('Real Beam Position (mm)');
 yl = ylabel('Estimated Beam Position (mm)');
 grid on
 
 if big_fonts
-    tl = title({'Real x Estimated Beam Position';'Da\Phine (no iteration)'});
+    tl = title({'Real x Estimated Beam Position';'\partial\Sigma/\Delta (no iteration)'});
     
     set(gca,'FontSize', 24);
     set(xl,'FontSize', 20);
@@ -201,7 +201,7 @@ contourf(xx,yy,xy1m_Inaccuracy_x,30); % Plot data
 c = colorbar;
 ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Inaccuracy Estimation for x - Da\Phine (no iteration)')
+title('Inaccuracy Estimation for x - \partial\Sigma/\Delta (no iteration)')
 ylabel('Y (mm)');
 xlabel('X (mm)');
 zlabel('Inaccuracy')
@@ -212,7 +212,7 @@ contourf(xx,yy,xy1m_Inaccuracy_y,30); % Plot data
 c = colorbar;
 ylabel(c,'Inaccuracy (mm)');
 grid on
-title('Inaccuracy Estimation for y - Da\Phine (no iteration)')
+title('Inaccuracy Estimation for y - \partial\Sigma/\Delta (no iteration)')
 ylabel('Y (mm)')
 xlabel('X (mm)')
 zlabel('Inaccuracy')
@@ -228,13 +228,13 @@ c = colorbar;
 e_bound = caxis;
 ylabel(c,'Absolute Inaccuracy (mm)');
 grid on
-tl = title('Absolute Inaccuracy Estimation - Da\Phine (no iteration)');
+tl = title('Absolute Inaccuracy Estimation - \partial\Sigma/\Delta (no iteration)');
 yl = ylabel('Y (mm)');
 xl = xlabel('X (mm)');
 axis equal
 
 if big_fonts 
-    tl = title({'Absolute Inaccuracy Estimation';'Da\Phine (no iteration)'});
+    tl = title({'Absolute Inaccuracy Estimation';'\partial\Sigma/\Delta (no iteration)'});
     set(gca,'FontSize', 24);
     set(xl,'FontSize', 20);
     set(yl,'FontSize', 20);
@@ -279,13 +279,13 @@ hold off
 
 ylabel(c,'Absolute Inaccuracy (mm)');
 grid on
-tl = title(['Inaccuracy smaller than ' num2str(err1*1e6) ' nm - Da\Phine (no iteration)']);
+tl = title(['Inaccuracy smaller than ' num2str(err1*1e6) ' nm - \partial\Sigma/\Delta (no iteration)']);
 yl = ylabel('Y (mm)');
 xl = xlabel('X (mm)');
 axis equal
 
 if big_fonts 
-    tl = title({['Inaccuracy smaller than ' num2str(err1*1e6) ' nm'];['Da\Phine (no iteration)']});
+    tl = title({['Inaccuracy smaller than ' num2str(err1*1e6) ' nm'];['\partial\Sigma/\Delta (no iteration)']});
     set(gca,'FontSize', 24);
     set(xl,'FontSize', 20);
     set(yl,'FontSize', 20);
