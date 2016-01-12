@@ -68,11 +68,11 @@ f = frev*m;
 omega = 2*pi*f;
 
 % Calculate the charge [C] of each bunch based on average beam current
-Q0 = Iavg/frev*nbunches
+Q0 = Iavg/frev*nbunches;
 %Q0 = Iavg/frev/nbunches;
 % FIXME: why these two versions of Q0 are so different?
 
-Ibeam = Q0/(sqrt(2*pi)).*exp(-(2*pi.*f).^2*bl^2-j*2*pi*f*t0);
+Ibeam = Q0/(sqrt(2*pi)).*exp(-(2*pi.*f).^2*bl^2-1j*2*pi*f*t0);
 % FIXME: why these two versions of Ibeam are so different?
 %if nbunches == 1
 %    Ibeam = frev*Q0*exp(-2*pi^2*bl^2*f.^2).*exp(-1j*1/2/frf*f);

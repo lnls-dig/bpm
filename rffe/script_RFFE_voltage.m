@@ -42,16 +42,16 @@ m = 0:nharmonics*h;
 frev = frf/(h);                 % revolution frequency
 f = frev*m;
 
-Z=R0./(1+j*2*pi.*f*R0*Cb);
+Z=R0./(1+1j*2*pi.*f*R0*Cb);
 
-Ibeam=Ib.*exp(-(2*pi.*f).^2*bl^2/2-j*2*pi*f*t0);    % beam current in frequency domain 
-Iim=max(CovF)*bd/(beta*c)*j*2*pi.*f.*Ibeam;         % image current on the vacuum chamber walls
+Ibeam=Ib.*exp(-(2*pi.*f).^2*bl^2/2-1j*2*pi*f*t0);    % beam current in frequency domain 
+Iim=max(CovF)*bd/(beta*c)*1j*2*pi.*f.*Ibeam;         % image current on the vacuum chamber walls
 Vbutton=Z.*Iim;                                     % button voltage
 
 Ibeamt=N/2*ifft(Ibeam);                             % beam current - time domain    
 Iimt=N/2*ifft(Iim);                                 % Image current - time domain
 
-Vcable=exp(-(1+j).*sqrt(f./fe)).*Vbutton;           % Voltage at cable output. Model considering skin loss
+Vcable=exp(-(1+1j).*sqrt(f./fe)).*Vbutton;           % Voltage at cable output. Model considering skin loss
 
 H=(0.356859.*sqrt(f/1e6)+0.00047.*f/1e6)*25/(0.3048*100); % Loss @ coax cable according to Times microwave model for LMR195
 
@@ -92,7 +92,7 @@ xlabel('Time (ps)','fontsize',16,'FontWeight', 'bold')
 ylabel('Signal (V)','fontsize',16,'FontWeight', 'bold');
 set(gca,'FontSize',12)
 grid on
-h=legend('Signal at BPM button','Signal after cables - RFFE input','After cables Times')
+h=legend('Signal at BPM button','Signal after cables - RFFE input','After cables Times');
 set(h, 'Fontsize',10)
 axis([0 500 -10 40])
 title('Button BPM, 2 mm thickness, 0.3 mm gap, 6 mm diameter', 'FontSize', 16, 'FontWeight', 'bold');
@@ -114,7 +114,7 @@ xlabel('Time (ps)','fontsize',16,'FontWeight', 'bold')
 ylabel('Signal (V)','fontsize',16,'FontWeight', 'bold');
 set(gca,'FontSize',12)
 grid on
-h=legend('Button','After cables','After cables Times')
+h=legend('Button','After cables','After cables Times');
 set(h, 'Fontsize',10)
 axis([0 500 -10 35])
 
@@ -133,6 +133,6 @@ xlabel('Frequency (GHz)','fontsize',16,'FontWeight', 'bold')
 ylabel('Signal (dBm)','fontsize',16,'FontWeight', 'bold');
 grid on
 set(gca,'FontSize',12)
-h=legend('Button','After cables','After cables Times')
+h=legend('Button','After cables','After cables Times');
 set(h, 'Fontsize',10)
 axis([0 10 -90 -40])
