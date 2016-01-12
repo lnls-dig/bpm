@@ -153,7 +153,7 @@ signalVbpf = lsim(sys_bpf, signalVcable, t)';
 
 % Plot results
 figure;
-plot(t/1e-9, [signalIbeam' signalIim']);
+plot(t/1e-9, [signalIbeam(:) signalIim(:)]);
 xlabel('Time (ns)');
 ylabel('Current (A)');
 title('Beam current and image current at button (nominal button parameters)');
@@ -161,7 +161,7 @@ legend('Beam current','Image current');
 grid on
 
 figure;
-plot(t/1e-9, [signalVim' signalVcable']);
+plot(t/1e-9, [signalVim(:) signalVcable(:)]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
 legend('Voltage at button', 'Voltage at RF front-end input');
@@ -169,7 +169,7 @@ title('RF front-end voltages (nominal button parameters)');
 grid on
 
 figure;
-plot(t/1e-9,[signalVcable' signalVbpf']);
+plot(t/1e-9,[signalVcable(:) signalVbpf(:)]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
 title('RF front-end voltages (nominal button parameters)');
