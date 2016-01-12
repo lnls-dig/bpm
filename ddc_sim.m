@@ -139,9 +139,9 @@ window = nuttallwin(length(a_mag(50:end)));
 [MAF_calc_pos, ff_calc_pos] = fourierseries(calc_pos(50:end), Ffofb, window);
 [MAF_calc_pos_s, ff_calc_pos_s] = fourierseries(calc_pos_s(50:end), Ffofb, window);
 
-% General coloring rules: unswitched signal : green, switched: red,
-% sausaged: blue. If overplotting, the second color may be yellow,
-% magenta and cyan, respectively.
+% General coloring rules: unswitched signal: green, switched: red,
+% sausaged: blue.
+% If overplotting, the second color may be yellow, magenta and cyan, respectively.
 
 fig_fft = figure('name','a, c FFT');
 plot(ff_a_mag, 20*log10(MAF_a_mag),'b.'); hold on

@@ -15,12 +15,10 @@ b = abcd(:,2);
 c = abcd(:,3);
 d = abcd(:,4);
 
-ac = a-c;
-bd = b-d;
-ab = a-b;
-cd = c-d;
+
 sum = a+b+c+d;
 
-xy = [(ac-bd)./sum*Kx (ac+bd)./sum*Ky];
-q = (ab+cd)./sum*Kx;
+
+xy = [(a-c)./sum*Kx (b-d)./sum*Ky];
+q = 0; % Not implemented
 s = sum*Ks;

@@ -8,3 +8,6 @@ __pycache__
 # Matlab
 *.asv
 *.m~
+
+# Octave
+octave-workspace
