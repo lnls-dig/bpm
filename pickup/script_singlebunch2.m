@@ -16,7 +16,7 @@ clear all
 % Script parameters
 % -----------------
 sirius_parameters;
-Iavg = 0.001;
+Iavg = storagering.beamCurrentSB;
 tfinal = 1/storagering.frf;
 beampos = [0 0];
 bd_sweep = 3e-3:1e-3:7e-3;              % Uncomment/Comment this line to use/unuse sweep
