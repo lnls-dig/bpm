@@ -51,14 +51,11 @@ bd = bpm.pickup.button.diameter;
 fe = bpm.cable.fe;
 cablelength = bpm.cable.length;
 
-% FIXME: total simulation time?
-t0=5e-10;
+% Time offset for first bunch
+t0 = 5e-10;
 
-% Revolution frequency [Hz]
+% Revolution frequency
 frev = frf/h;
-
-% Filling ratio (0 <= dfill <= 1)
-dfill = nbunches/h;
 
 % m is the index of the beam revolution harmonics
 m = 0:nharmonicsRF*h;
@@ -67,23 +64,13 @@ m = 0:nharmonicsRF*h;
 f = frev*m;
 omega = 2*pi*f;
 
-% Calculate the charge [C] of each bunch based on average beam current
-Q0 = Iavg/frev*nbunches;
-%Q0 = Iavg/frev/nbunches;
-% FIXME: why these two versions of Q0 are so different?
+% Calculate the average bunch current
+Ib = Iavg/nbunches;
 
-Ibeam = Q0/(sqrt(2*pi)).*exp(-(2*pi.*f).^2*bl^2-1j*2*pi*f*t0);
-% FIXME: why these two versions of Ibeam are so different?
-%if nbunches == 1
-%    Ibeam = frev*Q0*exp(-2*pi^2*bl^2*f.^2).*exp(-1j*1/2/frf*f);
-%else
-%    q = -nharmonicsRev:nharmonicsRev;
-%    beamcharge_spectrum = Q0*exp(-2*pi^2*bl^2*(q*frf).^2);
-%    Ibeam = zeros(1,length(m));
-%    for i=1:length(m)
-%        Ibeam(i) = frf*dfill*sum(beamcharge_spectrum.*sinc(dfill*(m(i)-q*h)));
-%    end
-%end
+Ibeam=0;
+for i=0:nbunches-1
+    Ibeam=Ibeam+Ib.*exp(-(2*pi.*f).^2*bl^2/2-1j*2*pi*f*(t0+i*1/frf));
+end
 
 % Beam current to image current
 CovF = beamcoverage(bpm.pickup, beampos, 500);
