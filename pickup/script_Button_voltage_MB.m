@@ -16,13 +16,14 @@ R0 = bpm.pickup.button.R0;                  % Real part of impedance
 beta = storagering.beta;                    % Beam percentual speed (in relation to c)
 
 frf = storagering.frf;                      % RF frequency
-Ib = storagering.beamCurrent/storagering.h; % Single bunch current
+I = storagering.beamCurrent;                % Beam current
 tfinal = 1/storagering.frf;     
 bl = storagering.bunchLength;               % bunch length    
 fe = bpm.cable.fe;                          % characteristic frequency for the LMR195, according to times microwave
 cablelength = bpm.cable.length;             % Cable length
 bd = button.diameter;                       % Button diameter
-h=storagering.h;                            % Harmonic number
+h = storagering.h;                          % Harmonic number
+nb = h;                                     % Number of bunches
 
 N=nharmonics*h;
 
@@ -39,8 +40,10 @@ f = frev*m;
 
 Z=R0./(1+1j*2*pi.*f*R0*Cb);
 
+Ib = I/nb;
+
 Ibeam=0;
-for i=0:(storagering.h-1)
+for i=0:nb-1
     Ibeam=Ibeam+Ib.*exp(-(2*pi.*f).^2*bl^2/2-1j*2*pi*f*(t0+i*1/frf));    % beam current in frequency domain 
 end
 
