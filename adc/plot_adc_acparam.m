@@ -66,14 +66,14 @@ if length(p) == 1
     fprintf('\n');
 
 else
-    plot(fc_plot, [p.SNR], 'LineWidth',2);
+    plot([p.SNR], 'LineWidth',2);
     hold on;
-    plot(fc_plot, [p.SINAD], 'k', 'LineWidth',2);
+    plot([p.SINAD], 'k', 'LineWidth',2);
     set(gca, 'FontSize', 12);
     legend('SNR', 'SINAD');
     title(sprintf('f_s = %0.2f %s, %d bits, %0.2f Vpp full-scale', fs_plot, fs_unit, p(1).ADC_specs.nbits, p(1).ADC_specs.fsr), 'FontSize', 12, 'FontWeight', 'bold'); % FIXME p(1)
     ylabel('dB', 'FontSize', 12, 'FontWeight', 'bold');
-    xlabel(sprintf('Frequency [%s]', fc_unit), 'FontSize', 12, 'FontWeight', 'bold');
+    xlabel('Experiment Number', 'FontSize', 12, 'FontWeight', 'bold');
     axis tight
 %     ax = axis;
 %     ax(4) = 0;
