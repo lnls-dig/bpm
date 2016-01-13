@@ -36,8 +36,8 @@ if exist('bd_sweep', 'var') && ~isempty(bd_sweep)
         r = bunchfseries(storagering, bpm, Iavg, 1, beampos, 1500);
 
         % Convert spectra to time-domain representation
-        signalVim = fourierseries2time(r.freq, r.Vim, tfinal);
-        [signalVcable, t] = fourierseries2time(r.freq, r.Vcable, tfinal);
+        signalVim = fourierseries2time(abs(r.Vim), angle(r.Vim), r.freq);
+        [signalVcable, t] = fourierseries2time(abs(r.Vcable), angle(r.Vcable), r.freq);
 
         signalBDiameter = [signalBDiameter; signalVim];
         signalMaxDiameter(i) = max(abs(signalVim));
@@ -72,8 +72,8 @@ if exist('gap_sweep', 'var') && ~isempty(gap_sweep)
         r = bunchfseries(storagering, bpm, Iavg, 1, beampos, 1500);
 
         % Convert spectra to time-domain representation
-        signalVim = fourierseries2time(r.freq, r.Vim, tfinal);
-        [signalVcable, t] = fourierseries2time(r.freq, r.Vcable, tfinal);
+        signalVim = fourierseries2time(abs(r.Vim), angle(r.Vim), r.freq);
+        [signalVcable, t] = fourierseries2time(abs(r.Vcable), angle(r.Vcable), r.freq);
 
         signalBGap = [signalBGap; signalVim];
         signalMaxGap(i) = max(abs(signalVim));
@@ -108,8 +108,8 @@ if exist('thickness_sweep', 'var') && ~isempty(thickness_sweep)
         r = bunchfseries(storagering, bpm, Iavg, 1, beampos, 1500);
 
         % Convert spectra to time-domain representation
-        signalVim = fourierseries2time(r.freq, r.Vim, tfinal);
-        [signalVcable, t] = fourierseries2time(r.freq, r.Vcable, tfinal);
+        signalVim = fourierseries2time(abs(r.Vim), angle(r.Vim), r.freq); 
+        [signalVcable, t] = fourierseries2time(abs(r.Vcable), angle(r.Vcable), r.freq);
 
         signalBThickness = [signalBThickness; signalVim];
         signalMaxThickness(i) = max(abs(signalVim));
@@ -137,10 +137,10 @@ sirius_bpmparameters;
 r = bunchfseries(storagering, bpm, Iavg, 1, beampos, 1500);
 
 % Convert spectra to time-domain representation
-signalVim = fourierseries2time(r.freq, r.Vim, tfinal);
-signalIbeam = fourierseries2time(r.freq, r.Ibeam, tfinal);
-signalIim = fourierseries2time(r.freq, r.Iim, tfinal);
-[signalVcable, t] = fourierseries2time(r.freq, r.Vcable, tfinal);
+signalVim = fourierseries2time(abs(r.Vim), angle(r.Vim), r.freq);
+signalIbeam = fourierseries2time(abs(r.Ibeam), angle(r.Ibeam), r.freq);
+signalIim = fourierseries2time(abs(r.Iim), angle(r.Iim), r.freq);
+[signalVcable, t] = fourierseries2time(abs(r.Vcable), angle(r.Vcable), r.freq);
 
 % Bandpass filtering on the RF front-end
 % Second order BPF
