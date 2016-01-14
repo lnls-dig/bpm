@@ -1,8 +1,8 @@
-function r = bunchfseries(accelerator, bpm, Iavg, nbunches, beampos, nharmonicsRF, nharmonicsRev)
+function r = bunchfseries(accelerator, bpm, Iavg, nbunches, beampos, nharmonicsRF)
 %BUNCHFSERIES Calculate Fourier Series of current and voltage signals for
 %   button BPMs (take antenna with higher singal amplitude).
 %
-%   r = bunchfseries(accelerator, bpm, Iavg, nbunches, beampos, nharmonicsRF, nharmonicsRev)
+%   r = bunchfseries(accelerator, bpm, Iavg, nbunches, beampos, nharmonicsRF)
 %
 %   Inputs:
 %       accelerator: accelerator characteristics
@@ -36,9 +36,6 @@ end
 if nargin < 6
     nharmonicsRF = 100;
 end
-if nargin < 7
-    nharmonicsRev = 100;
-end
 
 physical_constants;
 
@@ -52,7 +49,7 @@ fe = bpm.cable.fe;
 cablelength = bpm.cable.length;
 
 % Time offset for first bunch
-t0 = 5e-10;
+t0 = 50e-12;
 
 % Revolution frequency
 frev = frf/h;
@@ -78,12 +75,15 @@ Iim = max(CovF)*bd/(beta*c)*(1j*omega).*Ibeam;
 
 % Calculate button impedance
 Cb = calccapacitance(bpm.pickup.button);
-Z0 = R0*Cb;
+Zb = R0./(1+1j*omega*R0*Cb);
 
 % Button response (convert image current to voltage on button)
-Vim = R0./(1j*omega*Z0 + 1).*Iim;
+Vim = Zb.*Iim;
+
+% Cable response
+Zcable = exp(-sqrt(abs(f)/fe)*cablelength/30.5).*exp(-sign(f).*1j.*sqrt(abs(f)/fe)*cablelength/30.5);
 
 % Coaxial cable response
-Vcable = exp(-sqrt(abs(f)/fe)*cablelength/30.5).*exp(-sign(f).*1j.*sqrt(abs(f)/fe)*cablelength/30.5).*Vim;
+Vcable = Zcable.*Vim;
 
 r = struct('freq', f, 'Ibeam', Ibeam, 'Iim', Iim, 'Vim', Vim, 'Vcable', Vcable);
