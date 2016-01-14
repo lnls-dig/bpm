@@ -66,7 +66,8 @@ Ib = Iavg/nbunches;
 
 Ibeam=0;
 for i=0:nbunches-1
-    Ibeam=Ibeam+Ib.*exp(-(2*pi.*f).^2*bl^2/2-1j*2*pi*f*(t0+i*1/frf));
+    % One-sided spectrum
+    Ibeam = Ibeam + [Ib 2*Ib*exp(-(2*pi.*f(2:end)).^2*bl^2/2 - 1j*2*pi*f(2:end)*(t0+i*1/frf))];
 end
 
 % Beam current to image current
