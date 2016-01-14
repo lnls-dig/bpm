@@ -82,7 +82,7 @@ Zb = R0./(1+1j*omega*R0*Cb);
 Vim = Zb.*Iim;
 
 % Cable response
-Zcable = exp(-sqrt(abs(f)/fe)*cablelength/30.5).*exp(-sign(f).*1j.*sqrt(abs(f)/fe)*cablelength/30.5);
+Zcable = exp(-(1+sign(f).*1j).*sqrt(abs(f)/fe)*cablelength/30.5);
 
 % Coaxial cable response
 Vcable = Zcable.*Vim;
