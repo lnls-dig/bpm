@@ -1,8 +1,7 @@
-%SCRIPT_SINGLEBUNCH2 Analysis of voltage signals at the RF front-end input
-%   and internal signal path for a single-bunch beam.
+%SCRIPT_BEAMSIGNAL Analysis of voltage signals at the RF front-end input
+%   and internal signal path.
 %
-%   Edit the script file ("edit script_singlebunch2") to choose the
-%   following parameters:
+%   Edit the script file to choose the following parameters:
 %       Iavg: average beam current [A]
 %       tfinal: final time instant for time-domaion simulations [s]
 %       beampos: horizontal and vertical beam position [m]
@@ -10,7 +9,7 @@
 %   Copyright (C) 2012 CNPEM
 %   Licensed under GNU Lesser General Public License v3.0 (LGPL)
 
-clear all
+function script_beamsignal
 
 % -----------------
 % Script parameters
@@ -175,3 +174,67 @@ ylabel('Voltage (V)');
 title('RF front-end voltages (nominal button parameters)');
 legend('RF front-end input voltage', 'RF front-end BPF output voltage');
 grid on
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% figure
+% subplot 121
+% plot(time*1e12', [Ibeamt' Iimt'],'Linewidth',3)
+% xlabel('Time (ps)','fontsize',16)
+% ylabel('Current (A)','fontsize',16);
+% set(gca,'FontSize',16)
+% grid on
+% % axis([0 10 -100 -50])
+% 
+% subplot 122
+% plot(f'/1e9,[abs(Ibeam') abs(Iim')],'Linewidth',3)
+% xlabel('Frequency (GHz)','fontsize',16)
+% ylabel('Amplitude (A)','fontsize',16);
+% title('Horizontal Plane (K_x = 10 mm)', 'FontSize', 16, 'FontWeight', 'bold');
+% 
+% set(gca,'FontSize',16)
+% grid on
+% %axis([0 30 0 max(Ibeam)])
+% 
+% figure
+% title('Button BPM, 2 mm thickness, 0.3 mm gap, 6 mm diameter', 'FontSize', 16, 'FontWeight', 'bold');
+% plot(time'*1e12,[Vbuttont' Vcablet'],'Linewidth',3)
+% xlabel('Time (ps)','fontsize',16,'FontWeight', 'bold')
+% ylabel('Signal (V)','fontsize',16,'FontWeight', 'bold');
+% set(gca,'FontSize',12)
+% grid on
+% h=legend('Button','After cables - RFFE input');
+% set(h, 'Fontsize',10)
+% axis([0 500 -10 40])
+% 
+% figure
+% plot(f'/1e9,[volt2dbm(abs(Vbutton'),R0) volt2dbm(abs(Vcable'),R0)],'Linewidth',3)
+% xlabel('Frequency (GHz)','fontsize',16,'FontWeight', 'bold')
+% ylabel('Signal (dBm)','fontsize',16,'FontWeight', 'bold');
+% grid on
+% set(gca,'FontSize',12)
+% h=legend('Button','After cables');
+% set(h, 'Fontsize',10)
+% axis([0 10 -90 0])
+
+function legend_labels = buildlegend(text, variables)
+
+if any(size(variables) == 1)
+    variables = variables(:);
+end
+
+legend_labels = cell(size(variables,1),1);
+for i=1:size(variables,1)
+    legend_labels{i} = sprintf(text, variables(i,:));
+end
