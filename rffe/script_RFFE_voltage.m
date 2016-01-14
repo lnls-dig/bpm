@@ -51,8 +51,8 @@ Ibeam=Ib.*exp(-(2*pi.*f).^2*bl^2/2-1j*2*pi*f*t0);    % beam current in frequency
 Iim=max(CovF)*bd/(beta*c)*1j*2*pi.*f.*Ibeam;         % image current on the vacuum chamber walls
 Vbutton=Z.*Iim;                                     % button voltage
 
-Ibeamt=N/2*ifft(Ibeam);                             % beam current - time domain    
-Iimt=N/2*ifft(Iim);                                 % Image current - time domain
+Ibeamt=N/2*ifft(Ibeam,'symmetric');                             % beam current - time domain    
+Iimt=N/2*ifft(Iim,'symmetric');                                 % Image current - time domain
 
 Vcable=exp(-(1+1j).*sqrt(f./fe)).*Vbutton;           % Voltage at cable output. Model considering skin loss
 
@@ -83,17 +83,17 @@ xlabel('Time (ps)','fontsize',16)
 ylabel('Current (A)','fontsize',16);
 set(gca,'FontSize',16)
 grid on
-% axis([0 10 -100 -50])
+axis([0 150 -5 40])
 
-subplot 122
+figure
 plot(f'/1e9,[abs(Ibeam') abs(Iim')],'Linewidth',3)
 xlabel('Frequency (GHz)','fontsize',16)
 ylabel('Amplitude (A)','fontsize',16);
 title('Horizontal Plane (K_x = 10 mm)', 'FontSize', 16, 'FontWeight', 'bold');
 
-set(gca,'FontSize',16)
-grid on
-%axis([0 30 0 max(Ibeam)])
+% set(gca,'FontSize',16)
+% grid on
+% %axis([0 30 0 max(Ibeam)])
 
 figure
 title('Button BPM, 2 mm thickness, 0.3 mm gap, 6 mm diameter', 'FontSize', 16, 'FontWeight', 'bold');
@@ -105,13 +105,3 @@ grid on
 h=legend('Button','After cables - RFFE input');
 set(h, 'Fontsize',10)
 axis([0 500 -10 40])
-
-figure
-plot(f'/1e9,[volt2dbm(abs(Vbutton'),R0) volt2dbm(abs(Vcable'),R0)],'Linewidth',3)
-xlabel('Frequency (GHz)','fontsize',16,'FontWeight', 'bold')
-ylabel('Signal (dBm)','fontsize',16,'FontWeight', 'bold');
-grid on
-set(gca,'FontSize',12)
-h=legend('Button','After cables');
-set(h, 'Fontsize',10)
-axis([0 10 -90 0])
