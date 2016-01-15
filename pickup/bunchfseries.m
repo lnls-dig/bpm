@@ -49,7 +49,7 @@ fe = bpm.cable.fe;
 cablelength = bpm.cable.length;
 
 % Time offset for first bunch
-t0 = 50e-12;
+t0 = 1/frf/2;
 
 % Revolution frequency
 frev = frf/h;
