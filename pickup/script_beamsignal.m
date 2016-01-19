@@ -135,131 +135,40 @@ if exist('thickness_sweep', 'var') && ~isempty(thickness_sweep)
 end
 
 % Calculate current and voltage signal spectra on BPM pick-up and BPM cable
-r = bunchfseries(storagering, bpm, Iavg, nbunches, beampos, 1500);
-
-[~ , rffer] = rffe_resp(storagering.frf, r.freq, rffe_attval);
-rffe_Vlpf1 = r.Vcable.*rffer.lpf1;
-rffe_Vbpf1 = r.Vcable.*rffer.bpf1;
-rffe_Vamp1 = r.Vcable.*rffer.amp1;
-rffe_Vatt1 = r.Vcable.*rffer.att1;
-rffe_Vlpf2 = r.Vcable.*rffer.lpf2;
-rffe_Vamp2 = r.Vcable.*rffer.amp2;
-rffe_Vlpf3 = r.Vcable.*rffer.lpf3;
-
-[~ , rffeadcr] = rffeadc_resp(r.freq);
-rffeadc_Vcable = rffe_Vlpf3.*rffeadcr.cable;
-
-[~ , adcr] = adc_resp(r.freq);
-adc_Vafe = rffe_Vlpf3.*adcr.afe;
-
-% BPM time-domain signals
-[signal_bpm_Ibeam, t]      = fourierseries2time(abs(r.Ibeam),    angle(r.Ibeam),    r.freq);
-[signal_bpm_Iim,   t]      = fourierseries2time(abs(r.Iim),      angle(r.Iim),      r.freq);
-[signal_bpm_Vim,   t]      = fourierseries2time(abs(r.Vim),      angle(r.Vim),      r.freq);
-[signal_bpmrffe_Vcable, t] = fourierseries2time(abs(r.Vcable),   angle(r.Vcable),   r.freq);
-[signal_rffe_Vlpf1, t]     = fourierseries2time(abs(rffe_Vlpf1), angle(rffe_Vlpf1), r.freq);
-[signal_rffe_Vbpf1, t]     = fourierseries2time(abs(rffe_Vbpf1), angle(rffe_Vbpf1), r.freq);
-[signal_rffe_Vamp1, t]     = fourierseries2time(abs(rffe_Vamp1), angle(rffe_Vamp1), r.freq);
-[signal_rffe_Vatt1, t]     = fourierseries2time(abs(rffe_Vatt1), angle(rffe_Vatt1), r.freq);
-[signal_rffe_Vlpf2, t]     = fourierseries2time(abs(rffe_Vlpf2), angle(rffe_Vlpf2), r.freq);
-[signal_rffe_Vamp2, t]     = fourierseries2time(abs(rffe_Vamp2), angle(rffe_Vamp2), r.freq);
-[signal_rffe_Vlpf3, t]     = fourierseries2time(abs(rffe_Vlpf3), angle(rffe_Vlpf3), r.freq);
-[signal_rffeadc_Vcable, t] = fourierseries2time(abs(rffeadc_Vcable), angle(rffeadc_Vcable), r.freq);
-[signal_adc_Vafe,   t]     = fourierseries2time(abs(adc_Vafe),   angle(adc_Vafe),   r.freq);
+[Ibeam, f] = bunchfseries(storagering, Iavg, nbunches, 1500);
+[resp1, t] = bpm_resp(Ibeam, f, bpm, storagering, beampos);
+[resp2, t] = rffe_v2_resp (resp1(end).signal_freq, f, rffe_attval, storagering.frf);
+[resp3, t] = fmcadc130m_resp(resp2(end).signal_freq, f);
 
 % Plot results
 figure;
-plot(t/1e-9, [signal_bpm_Ibeam signal_bpm_Iim]);
+plot(t/1e-9, [resp1(1:2).signal_time]);
 xlabel('Time (ns)');
 ylabel('Current (A)');
 title('Beam current and image current at button pick-up');
-legend('Beam current','Image current');
+legend(resp1(1:2).name);
 grid on;
 
 figure;
-plot(t/1e-9, [signal_bpm_Vim signal_bpmrffe_Vcable]);
+plot(t/1e-9, [resp1(3:4).signal_time]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
-legend('BPM button', 'BPM-RFFE cable');
+title('Voltage along signal path');
+legend(resp1(3:4).name);
+grid on;
+
+figure;
+plot(t/1e-9, [resp2(:).signal_time]);
+xlabel('Time (ns)');
+ylabel('Voltage (V)');
+legend(resp2(:).name);
 title('Voltage along signal path');
 grid on;
 
 figure;
-plot(t/1e-9, [signal_bpmrffe_Vcable signal_rffe_Vlpf1 signal_rffe_Vbpf1 signal_rffe_Vamp1 signal_rffe_Vatt1 signal_rffe_Vlpf2 signal_rffe_Vamp2 signal_rffe_Vlpf3]);
+plot(t/1e-9, [resp3(:).signal_time]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
-legend('BPM-RFFE cable', 'RFFE LPF #1', 'RFFE BPF #1', 'RFFE Amp #1', 'RFFE Att #1', 'RFFE LPF #2', 'RFFE Amp #2', 'RFFE LPF #3');
+legend(resp3(:).name);
 title('Voltage along signal path');
 grid on;
-
-figure;
-plot(t/1e-9, [signal_rffe_Vlpf3 signal_rffeadc_Vcable signal_adc_Vafe]);
-xlabel('Time (ns)');
-ylabel('Voltage (V)');
-legend('RFFE output', 'RFFE-ADC cable', 'ADC front-end');
-title('Voltage along signal path');
-grid on;
-
-function legend_labels = buildlegend(text, variables)
-
-if any(size(variables) == 1)
-    variables = variables(:);
-end
-
-legend_labels = cell(size(variables,1),1);
-for i=1:size(variables,1)
-    legend_labels{i} = sprintf(text, variables(i,:));
-end
-
-function [freqresp info] = rffe_resp(frf, f, att1_val)
-
-% Bandpass filter
-% Based on Mini-circuits LFCN-530 (https://www.minicircuits.com/pdfs/LFCN-530.pdf)
-%flpf_spec = 1e6*[0 1 100 500 530 670 700 815 820 945 1315 2140 3000 3640 4910 6000 Inf];
-%Glpf_spec = [0 -0.05 -0.22 -0.73 -0.81 -1.95 -2.89 -26.41 -28.41 -44.98 -39.77 -57.51 -47.94 -42.84 -18.81 -24.8 -24.8];
-flpf_spec = 1e6*[0 1 100 500 530 670 700 815 820 945 1315 2140 3000 Inf];
-Glpf_spec = [0 -0.05 -0.22 -0.73 -0.81 -1.95 -2.89 -26.41 -28.41 -44.98 -39.77 -57.51 -60 -60];
-Glpf = interp1(flpf_spec, Glpf_spec, f);
-Glpf = 10.^(Glpf/20);
-LPF = mps(Glpf);
-
-% Bandpass filter
-% Based on TAI-SAW TA1113A (http://www.taisaw.com/upload/product/TA1113A%20_Rev.1.0_.pdf)
-%fbpf_spec = [0 300e3 100e6 200e6 300e6 (frf-20e6) (frf-10e6) (frf+10e6) (frf+40e6) (frf+40e6+2500e6) Inf];
-%Gbpf_spec = [-80 -80 -70 -60 -55 -52 -2 -2 -55 0 0];
-fbpf_spec = [0 300e3 100e6 200e6 300e6 (frf-20e6) (frf-10e6) (frf+10e6) (frf+40e6) Inf];
-Gbpf_spec = [-80 -80 -70 -60 -55 -52 -2 -2 -55 -55];
-Gbpf = interp1(fbpf_spec, Gbpf_spec, f);
-Gbpf = 10.^(Gbpf/20);
-BPF = mps(Gbpf);
-
-% RF amplifier (Mini-circuits TAMP-72LN)
-amp1_gain = 10;
-
-% Attenuator (Mini-circuits DAT-31R5-SP)
-att1_il = 10^(-1.5/20);
-
-% Build frequency responses along signal path
-info.lpf1 = LPF;
-info.bpf1 = info.lpf1.*BPF;
-info.amp1 = info.bpf1.*amp1_gain;
-info.att1 = info.amp1.*att1_il*10^(-att1_val/20);
-info.lpf2 = info.att1.*LPF;
-info.amp2 = info.lpf2.*amp1_gain;
-info.lpf3 = info.amp2.*LPF;
-
-freqresp = info.lpf3;
-
-function [freqresp info] = adc_resp(f)
-
-il = 10^(-2.5/20);
-
-info.afe = il;
-freqresp = il;
-
-function [freqresp info] = rffeadc_resp(f)
-
-il = 10^(-0.5/20);
-
-info.cable = il;
-freqresp = il;
