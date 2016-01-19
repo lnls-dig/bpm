@@ -30,9 +30,12 @@ amp_nonlinearity = [-0.048634 1 0];
 % Attenuator (Mini-circuits DAT-31R5-SP)
 att1 = 10^(-1.5/20)*10^(-att1_val/20);
 
+% RFFE-FMC ADC coaxial cable
+cable_il = 10^(-0.5/20);
+
 % Build frequency responses along signal path
-names = {'input', 'LPF #1', 'BPF #1', 'Amp #1', 'Att #1', 'LPF #2', 'Amp #2', 'LPF #3'};
-freqresps = {ones(size(f)), LPF, BPF, amp_gain, att1, LPF, amp_gain, LPF};
-nonlinearities = {[], [], [],  amp_nonlinearity,[], [], amp_nonlinearity, []};
+names = {'RFFE input', 'RFFE LPF #1', 'RFFE BPF #1', 'RFFE Amp #1', 'RFFE Att #1', 'RFFE LPF #2', 'RFFE Amp #2', 'RFFE LPF #3', 'RFFE-FMC ADC coax. cable'};
+freqresps = {ones(size(f)), LPF, BPF, amp_gain, att1, LPF, amp_gain, LPF, cable_il};
+nonlinearities = {[], [], [],  amp_nonlinearity,[], [], amp_nonlinearity, [], []};
 
 [resp, t] = buildresp(input_signal, f, names, freqresps, nonlinearities);
