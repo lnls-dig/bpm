@@ -16,7 +16,8 @@ CovF = beamcoverage(bpm.pickup, beampos, 500);
 beam2bpm_current = max(CovF)*bd/(beta*c)*(1j*2*pi*f);
 
 % Button impedance (response from image current to voltage on button)
-Cb = calccapacitance(bpm.pickup.button);
+%Cb = calccapacitance(bpm.pickup.button);
+Cb = bpm.pickup.button.Cb_meas;
 Zbutton = R0./(1+1j*2*pi*f*R0*Cb);
 
 % Coaxial cable response (LMR195)

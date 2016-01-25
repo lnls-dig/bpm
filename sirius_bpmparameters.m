@@ -23,7 +23,8 @@ button = struct(...
     'diameter', 6e-3, ...               % Button diameter [m]
     'gap', 0.3e-3, ...                  % Button gap [m]
     'thickness', 2e-3, ...              % Button thickness [m]
-    'R0', 50 ...                        % Load impedance [ohm]
+    'R0', 50, ...                       % Load impedance [ohm]
+    'Cb_meas', 2.6e-12 ...             % Measured capacitance [F]
 );
 
 pickup = struct(...
