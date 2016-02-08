@@ -1,6 +1,6 @@
 function CovF = beamcoverage(pickup, beampos, n)
 %BEAMCOVERAGE Beam coverage factor for off-centered beams in a vacuum
-%   chamber of arbitrary geometry.
+%   chamber of arbitrary geometry. Valid for relativistic beams.
 %
 %   CovF = BEAMCOVERAGE(pickup, beampos, n)
 %
@@ -38,32 +38,21 @@ else
     n = round(n/4)*4 + 1;
 end
 
+Q = [0 0 0 0];
+
 if strcmpi(pickup.chamber.type, 'circular')
     bd = pickup.button.diameter;
     r = pickup.chamber.radius;
     [theta,d] = cart2pol(x,y);
     
-    dphi = bd/r*linspace(-0.5, 0.5, n);
+    dphi = bd/r*linspace(-0.5, 0.5, n)';
+    delta_phi = bd/r/(n-1);
     
-    phi1 = 3*pi/4 + dphi;
-    phi2 = pi/4 + dphi;
-    phi3 = -3*pi/4 + dphi;
-    phi4 = -pi/4 + dphi;
-        
-	cov1 = (r^2 - d^2)./(r^2 + d^2 - 2*r*d*cos(phi1-theta));
-    cov2 = (r^2 - d^2)./(r^2 + d^2 - 2*r*d*cos(phi2-theta));
-    cov3 = (r^2 - d^2)./(r^2 + d^2 - 2*r*d*cos(phi3-theta));
-    cov4 = (r^2 - d^2)./(r^2 + d^2 - 2*r*d*cos(phi4-theta));
-        
-    Q1 = cumtrapz(dphi, cov1);
-    Q2 = cumtrapz(dphi, cov2);
-    Q3 = cumtrapz(dphi, cov3);
-    Q4 = cumtrapz(dphi, cov4);
-    
-    Q1 = Q1(end)/2/pi;
-    Q2 = Q2(end)/2/pi;
-    Q3 = Q3(end)/2/pi;
-    Q4 = Q4(end)/2/pi;
+    button_angle = [3*pi/4 pi/4 -3*pi/4 -pi/4];
+
+    for i=1:length(button_angle)
+        Q(i) = trapz(axdensity(d, theta, r, button_angle(i) + dphi))*delta_phi;
+    end
     
 else
     % Boundary Element Numerical Method
@@ -80,8 +69,8 @@ else
     m = length(xm);
 
     % Calulate borders of buttons projected to horizontal axis
-    [b1, b2, b3, b4] = buttonborders(pickup, xm);
-
+    button_border = buttonborders(pickup, xm);
+    
     % Distances between vacuum chamber discretization points
     sl = sqrt((xchamb(2:end)-xchamb(1:end-1)).^2+(ychamb(2:end)-ychamb(1:end-1)).^2);
 
@@ -98,16 +87,15 @@ else
     sig = G\B'; % inv(G)*B'
 
     % Button signal summed over button discretization points
-    Q1 = sum(repmat(sl(b1), length(x), 1).*sig(b1,:)', 2);
-    Q2 = sum(repmat(sl(b2), length(x), 1).*sig(b2,:)', 2);
-    Q3 = sum(repmat(sl(b3), length(x), 1).*sig(b3,:)', 2);
-    Q4 = sum(repmat(sl(b4), length(x), 1).*sig(b4,:)', 2);
+    for i=1:length(button_border)
+        Q(i) = trapz(repmat(sl(button_border{i}), length(x), 1).*sig(button_border{i},:)', 2);
+    end
 
-    % % Verify if the integral of the entire contour is unitary
-    % total = sum(repmat(sl, length(x), 1).*sig', 2);
-    % if abs(1-total) > 10e-3
-    %     warning('bpm:beamcoverage:inaccuratecalculation', 'Inaccurate calculation (contour integral = %d).', total);
-    % end
+    % Verify if the integral of the entire contour is unitary
+    total = trapz(repmat(sl, length(x), 1).*sig', 2);
+    if abs(1-total) > 10e-3
+        warning('bpm:beamcoverage:inaccuratecalculation', 'Inaccurate calculation (contour integral = %d).', total);
+    end
 end
 
 % Correction factor (ratio between area of square with 'bd' side and button area)
@@ -119,12 +107,16 @@ else
 end
 
 % Calculate induced charge on each button
-CovF = [Q1 Q2 Q3 Q4]/CorrF;
+CovF = Q/CorrF;
 
 
 % -------------------
 % Auxiliary Functions
 % -------------------
+
+% Current density times chamber radius (only for circular chambers)
+function j = axdensity(d,theta,r,phi)
+j = 1/2/pi*((r^2-d^2)./(r^2+d^2-2*r*d*cos(phi-theta)));
 
 % Calculate matrix G for the Boundary Element Numerical Method
 function G = calcG(xm, ym, sl)
@@ -141,7 +133,7 @@ for j=1:n
 end
 
 % Calculate button borders
-function [b1,b2,b3,b4] = buttonborders(pickup, xm)
+function button_border = buttonborders(pickup, xm)
 
 bd = pickup.button.diameter;
 n = length(xm)+1;
@@ -165,6 +157,8 @@ b1 = find(and((xm(1:end/2) > -bx2), (xm(1:end/2) < -bx1)));
 b2 = find(and((xm(1:end/2) > bx1), (xm(1:end/2) < bx2)));
 b3 = find(and((xm((end/2+1):end) > -bx2), (xm((end/2+1):end) < -bx1))) + (n-1)/2;
 b4 = find(and((xm((end/2+1):end) > bx1), (xm((end/2+1):end) < bx2))) + (n-1)/2;
+
+button_border = {b1 b2 b3 b4};
 
 % Vacuum chamber geometry
 function [x,y] = chamber(chamber, n)
