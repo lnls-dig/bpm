@@ -32,7 +32,7 @@ function CovF = beamcoverage(pickup, beampos, n)
 x = beampos(:,1); y = beampos(:,2);
 
 % Ensures that the points describing the chamber are symetrical in relation to all 4 quadrants
-if nargin < 4
+if nargin < 3
     n = 101;
 else
     n = round(n/4)*4 + 1;
