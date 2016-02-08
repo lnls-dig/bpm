@@ -13,8 +13,8 @@ function CovF = beamcoverage(pickup, beampos, n)
 %   Outputs:
 %       CovF: coverage factor on each BPM pickup button, where the following
 %             convention is adopted:
-%             CovF(1): for button on negative x axis and positive y axis direction
-%             CovF(2): for button on positive x axis and positive y axis direction
+%             CovF(1): for button on positive x axis and positive y axis direction
+%             CovF(2): for button on negative x axis and positive y axis direction
 %             CovF(3): for button on negative x axis and negative y axis direction
 %             CovF(4): for button on positive x axis and negative y axis direction
 %   Examples:
@@ -30,6 +30,7 @@ function CovF = beamcoverage(pickup, beampos, n)
 %   For further information please refer to www.cells.es/Divisions/Accelerators/RF_Diagnostics/Diagnostics/OrbitPosition/Tools/BPMs_GUI
 
 x = beampos(:,1); y = beampos(:,2);
+npts = size(x,1);
 
 % Ensures that the points describing the chamber are symetrical in relation to all 4 quadrants
 if nargin < 3
@@ -38,7 +39,7 @@ else
     n = round(n/4)*4 + 1;
 end
 
-Q = [0 0 0 0];
+Q = zeros(npts, 4);
 
 if strcmpi(pickup.chamber.type, 'circular')
     bd = pickup.button.diameter;
@@ -48,12 +49,13 @@ if strcmpi(pickup.chamber.type, 'circular')
     dphi = bd/r*linspace(-0.5, 0.5, n)';
     delta_phi = bd/r/(n-1);
     
-    button_angle = [3*pi/4 pi/4 -3*pi/4 -pi/4];
+    button_angle = [pi/4 3*pi/4 5*pi/4 7*pi/4];
 
-    for i=1:length(button_angle)
-        Q(i) = trapz(axdensity(d, theta, r, button_angle(i) + dphi))*delta_phi;
+    for i=1:npts
+        for j=1:length(button_angle)
+            Q(i,j) = trapz(axdensity(d(i), theta(i), r, button_angle(j) + dphi))*delta_phi;
+        end
     end
-    
 else
     % Boundary Element Numerical Method
     % References: A. Stella, "ANALYSIS OF THE DAPHNE BEAM POSITION MONITOR WITH A BOUNDARY ELEMENT METHOD", Daphne Note CD-10 (1997)
@@ -77,24 +79,28 @@ else
     % Populate matrix G
     G = calcG(xm, ym, sl);
 
-    % Populate matrix B
-    B=zeros(length(x), m);
-    for i=1:m
-        B(:,i) = -log(sqrt((x-xm(i)).^2 + (y-ym(i)).^2));
-    end
+    nparticles = 1;
+    
+    for i=1:npts
+        % Populate matrix B
+        B = zeros(nparticles, m);
+        for j=1:m
+            B(:,j) = -log(sqrt((x(i)-xm(j)).^2 + (y(i)  -ym(j)).^2));
+        end
 
-    % Inducted signal density over the chamber
-    sig = G\B'; % inv(G)*B'
+        % Inducted signal density over the chamber
+        sig = G\B'; % inv(G)*B'
 
-    % Button signal summed over button discretization points
-    for i=1:length(button_border)
-        Q(i) = trapz(repmat(sl(button_border{i}), length(x), 1).*sig(button_border{i},:)', 2);
-    end
+        % Button signal summed over button discretization points
+        for j=1:length(button_border)
+            Q(i,j) = trapz(repmat(sl(button_border{j}), nparticles, 1).*sig(button_border{j},:)', 2);
+        end
 
-    % Verify if the integral of the entire contour is unitary
-    total = trapz(repmat(sl, length(x), 1).*sig', 2);
-    if abs(1-total) > 10e-3
-        warning('bpm:beamcoverage:inaccuratecalculation', 'Inaccurate calculation (contour integral = %d).', total);
+        % Verify if the integral of the entire contour is unitary
+        total = trapz(repmat(sl, nparticles, 1).*sig', 2);
+        if abs(1-total) > 10e-3
+            warning('bpm:beamcoverage:inaccuratecalculation', 'Inaccurate calculation (contour integral = %d).', total);
+        end
     end
 end
 
@@ -153,8 +159,8 @@ elseif strcmpi(pickup.chamber.type, 'circular')
     bx2 = sin(alpha2)*r;         % bx2 = Distance from axis Y+ to the lower button boundary, projected over X axis
 end
 
-b1 = find(and((xm(1:end/2) > -bx2), (xm(1:end/2) < -bx1)));
-b2 = find(and((xm(1:end/2) > bx1), (xm(1:end/2) < bx2)));
+b1 = find(and((xm(1:end/2) > bx1), (xm(1:end/2) < bx2)));
+b2 = find(and((xm(1:end/2) > -bx2), (xm(1:end/2) < -bx1)));
 b3 = find(and((xm((end/2+1):end) > -bx2), (xm((end/2+1):end) < -bx1))) + (n-1)/2;
 b4 = find(and((xm((end/2+1):end) > bx1), (xm((end/2+1):end) < bx2))) + (n-1)/2;
 
