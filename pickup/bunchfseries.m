@@ -45,10 +45,10 @@ if isscalar(Iavg)
     % Average bunch current
     Ib = Iavg/nbunches;
     
-	fill = [ones(nbunches,1)*Ib zeros(h-nbunches,1)]; 
+	fill = [ones(nbunches,1)*Ib; zeros(h-nbunches,1)]; 
 else
     if length(Iavg) ~= h
-        error('''Iavg'' must be an scalar value or an array with length equal to the accelerator''s harmonic number.');
+        error('bpm:bunchfseries:inputarguments', '''Iavg'' must be an scalar value or an array with length equal to the accelerator''s harmonic number.');
     end
     fill = Iavg;
 end
