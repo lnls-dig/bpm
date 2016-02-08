@@ -22,10 +22,10 @@ rffe_attval = 14;
 sirius_bpmparameters;
 
 % Calculate current and voltage signal spectra on BPM pick-up and BPM cable
-%[Ibeam, f] = bunchfseries(storagering, storagering.beamCurrentSB, 1, 1500);
-%[Ibeam, f] = bunchfseries(storagering, [storagering.beamCurrent/648*ones(1,648) zeros(1,216)], 0, 1500);
-[Ibeam, f] = bunchfseries(storagering, [50e-3/648*ones(1,648) zeros(1,216)], 0, 1500);
-%[Ibeam, f] = bunchfseries(storagering, [storagering.beamCurrent/648*ones(1,648) zeros(1,107) storagering.beamCurrentSB zeros(1,108)], 0, 1500);
+%[Ibeam, f] = beamsignal(storagering, storagering.beamCurrentSB, 1, 1500);
+%[Ibeam, f] = beamsignal(storagering, [storagering.beamCurrent/648*ones(1,648) zeros(1,216)], 0, 1500);
+[Ibeam, f] = beamsignal(storagering, [50e-3/648*ones(1,648) zeros(1,216)], 0, 1500);
+%[Ibeam, f] = beamsignal(storagering, [storagering.beamCurrent/648*ones(1,648) zeros(1,107) storagering.beamCurrentSB zeros(1,108)], 0, 1500);
 [resp, t] = sirius_button_bpm_resp(Ibeam, f, beampos, rffe_attval);
 
 % Plot results

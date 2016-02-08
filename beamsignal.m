@@ -1,7 +1,7 @@
-function [Ibeam, f] = bunchfseries(accelerator, Iavg, nbunches, nharmonicsRF)
-%BUNCHFSERIES Calculate Fourier Series of beam current.
+function [Ibeam, f] = beamsignal(accelerator, Iavg, nbunches, nharmonicsRF)
+%BEAMSIGNAL Calculate Fourier Series of beam current.
 %
-%   r = bunchfseries(accelerator, bpm, Iavg, nbunches, nharmonicsRF)
+%   [Ibeam, f] = beamsignal(accelerator, Iavg, nbunches, nharmonicsRF)
 %
 %   Inputs:
 %       accelerator: struct with accelerator parameters
