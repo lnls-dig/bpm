@@ -15,8 +15,6 @@ function script_beamsignal
 % Script parameters
 % -----------------
 sirius_parameters;
-Iavg = storagering.beamCurrentSB;
-nbunches = 1; %700;
 beampos = [0 0];
 rffe_attval = 14;
 % -----------------
@@ -24,40 +22,41 @@ rffe_attval = 14;
 sirius_bpmparameters;
 
 % Calculate current and voltage signal spectra on BPM pick-up and BPM cable
-[Ibeam, f] = bunchfseries(storagering, Iavg, nbunches, 1500);
-[resp1, t] = bpm_resp(Ibeam, f, bpm, storagering, beampos);
-[resp2, t] = rffe_v2_resp (resp1(end).signal_freq, f, rffe_attval, storagering.frf);
-[resp3, t] = fmcadc130m_resp(resp2(end).signal_freq, f);
+%[Ibeam, f] = bunchfseries(storagering, storagering.beamCurrentSB, 1, 1500);
+%[Ibeam, f] = bunchfseries(storagering, [storagering.beamCurrent/648*ones(1,648) zeros(1,216)], 0, 1500);
+[Ibeam, f] = bunchfseries(storagering, [50e-3/648*ones(1,648) zeros(1,216)], 0, 1500);
+%[Ibeam, f] = bunchfseries(storagering, [storagering.beamCurrent/648*ones(1,648) zeros(1,107) storagering.beamCurrentSB zeros(1,108)], 0, 1500);
+[resp, t] = sirius_button_bpm_resp(Ibeam, f, beampos, rffe_attval);
 
 % Plot results
 figure;
-plot(t/1e-9, [resp1(1:2).signal_time]);
+plot(t/1e-9, [resp(1:2).signal_time]);
 xlabel('Time (ns)');
 ylabel('Current (A)');
-title('Beam current and image current at button pick-up');
-legend(resp1(1:2).name);
+%title('Beam current and image current at button pick-up');
+legend(resp(1:2).name);
 grid on;
 
 figure;
-plot(t/1e-9, [resp1(3:4).signal_time]);
+plot(t/1e-9, [resp(3:4).signal_time]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
-title('Voltage along signal path');
-legend(resp1(3:4).name);
+title('Voltage along signal path (BPM pick-up)');
+legend(resp(3:4).name);
 grid on;
 
 figure;
-plot(t/1e-9, [resp2(:).signal_time]);
+plot(t/1e-9, [resp(5:11).signal_time]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
-legend(resp2(:).name);
-title('Voltage along signal path');
+legend(resp(5:11).name);
+title('Voltage along signal path (RFFE)');
 grid on;
 
 figure;
-plot(t/1e-9, [resp3(:).signal_time]);
+plot(t/1e-9, [resp(12:14).signal_time]);
 xlabel('Time (ns)');
 ylabel('Voltage (V)');
-legend(resp3(:).name);
-title('Voltage along signal path');
+legend(resp(12:14).name);
+title('Voltage along signal path (FMC ADC)');
 grid on;

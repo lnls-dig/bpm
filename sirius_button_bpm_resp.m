@@ -27,9 +27,9 @@ Zcable = exp(-(1+sign(f).*1j).*sqrt(abs(f)/fe)*cablelength/30.5);
 
 % RFFE v2 low pass filter response
 % Based on Mini-circuits LFCN-530 (https://www.minicircuits.com/pdfs/LFCN-530.pdf)
-%flpf_spec = 1e6*[0 1 100 500 530 670 700 815 820 945 1315 2140 3000 3640 4910 6000 Inf];
+%flpf_spec = 1e6*[0 1 100 500 530 670 700 815 820 945 1315 2140 3000 3640 4910 6000 1e15];
 %Glpf_spec = [0 -0.05 -0.22 -0.73 -0.81 -1.95 -2.89 -26.41 -28.41 -44.98 -39.77 -57.51 -47.94 -42.84 -18.81 -24.8 -24.8];
-flpf_spec = 1e6*[0 1 100 500 530 670 700 815 820 945 1315 2140 3000 Inf];
+flpf_spec = 1e6*[0 1 100 500 530 670 700 815 820 945 1315 2140 3000 1e15];
 Glpf_spec = [0 -0.05 -0.22 -0.73 -0.81 -1.95 -2.89 -26.41 -28.41 -44.98 -39.77 -57.51 -60 -60];
 Glpf = interp1(flpf_spec, Glpf_spec, f);
 Glpf = 10.^(Glpf/20);
@@ -37,9 +37,9 @@ LPF = mps(Glpf);
 
 % RFFE v2 bandpass filter
 % Based on TAI-SAW TA1113A (http://www.taisaw.com/upload/product/TA1113A%20_Rev.1.0_.pdf)
-%fbpf_spec = [0 300e3 100e6 200e6 300e6 (frf-20e6) (frf-10e6) (frf+10e6) (frf+40e6) (frf+40e6+2500e6) Inf];
+%fbpf_spec = [0 300e3 100e6 200e6 300e6 (frf-20e6) (frf-10e6) (frf+10e6) (frf+40e6) (frf+40e6+2500e6) 1e15];
 %Gbpf_spec = [-80 -80 -70 -60 -55 -52 -2 -2 -55 0 0];
-fbpf_spec = [0 300e3 100e6 200e6 300e6 (frf-20e6) (frf-10e6) (frf+10e6) (frf+40e6) Inf];
+fbpf_spec = [0 300e3 100e6 200e6 300e6 (frf-20e6) (frf-10e6) (frf+10e6) (frf+40e6) 1e15];
 Gbpf_spec = [-80 -80 -70 -60 -55 -52 -2 -2 -55 -55];
 Gbpf = interp1(fbpf_spec, Gbpf_spec, f);
 Gbpf = 10.^(Gbpf/20);
