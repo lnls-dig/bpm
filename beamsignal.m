@@ -1,19 +1,21 @@
-function [Ibeam, f] = beamsignal(accelerator, Iavg, nbunches, nharmonicsRF)
+function [Ibeam, f] = beamsignal(frf, h, bl, Iavg, nbunches, nhrf)
 %BEAMSIGNAL Calculate Fourier Series of beam current.
 %
-%   [Ibeam, f] = beamsignal(accelerator, Iavg, nbunches, nharmonicsRF)
+%   [Ibeam, f] = beamsignal(frf, h, bl, Iavg, nbunches, nhrf)
 %
 %   Inputs:
-%       accelerator: struct with accelerator parameters
+%       frf: accelerating RF frequency [Hz]
+%	h: harmonic number (number of buckets)
+%	bl: bunch length [s]
 %       Iavg: total average beam current [A] (if scalar value)
 %             average current [A] of each bunch (if array value)
 %       nbunches: number of bunches on the beam
 %                 (this value is ignored when 'Iavg' is an array)
-%       nharmonicsRF: number of RF harmonics to take into account on the
-%                     analysis - optional (default = 100)
+%       nhrf: number of RF harmonics to take into account on the analysis 
+%             optional (default = 100)
 %
 %   Outputs:
-%       Ibeam: Fourier series coefficients of beam current [A]
+%       Ibeam: Fourier series (complex values) of beam current [A]
 %       f:     frequency vector [Hz]
 %
 %   See also FOURIERSERIES2TIME
@@ -21,13 +23,9 @@ function [Ibeam, f] = beamsignal(accelerator, Iavg, nbunches, nharmonicsRF)
 %   Copyright (C) 2012 CNPEM
 %   Licensed under GNU Lesser General Public License v3.0 (LGPL)
 
-if nargin < 4
-    nharmonicsRF = 100;
+if nargin < 6
+    nhrf = 100;
 end
-
-h = accelerator.h;
-frf = accelerator.frf;
-bl = accelerator.bunchLength;
 
 % Time offset for first bunch
 t0 = 1/frf/2;
@@ -36,7 +34,7 @@ t0 = 1/frf/2;
 frev = frf/h;
 
 % m is the index of the beam revolution harmonics
-m = 0:nharmonicsRF*h;
+m = 0:nhrf*h;
 
 % Frequency vector
 f = frev*m;
@@ -48,7 +46,7 @@ if isscalar(Iavg)
 	fill = [ones(nbunches,1)*Ib; zeros(h-nbunches,1)]; 
 else
     if length(Iavg) ~= h
-        error('bpm:bunchfseries:inputarguments', '''Iavg'' must be an scalar value or an array with length equal to the accelerator''s harmonic number.');
+        error('bpm:beamsignal:inputarguments', '''Iavg'' must be an scalar value or an array with length equal to the accelerator''s harmonic number.');
     end
     fill = Iavg;
 end
