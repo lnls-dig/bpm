@@ -93,6 +93,23 @@ freqresps = {1, ...
              adc_afe_il, ...
              1, ...
              };
+
+noisefactors = {1, ...
+               1, ...
+               1+1./abs(Zbutton).^2, ...
+               [], ...
+               [], ...
+               [], ...
+               10^(1/10), ...
+               [], ...
+               [], ...
+               10^(1/10), ...
+               [], ...
+               [], ...
+               [], ...
+               [], ...
+               };
+        
          
 nonlinearities = {[], ...
                   [], ...
@@ -110,20 +127,57 @@ nonlinearities = {[], ...
                   adc_nonlinearity, ...
                   };
 
-[resp, t] = buildresp(beam_current, f, names, freqresps, nonlinearities);
+[resp, t] = buildresp(beam_current, zeros(1,length(f)), f, names, freqresps, noisefactors, nonlinearities);
 
-function [resp, t] = buildresp(input_signal, f, names, freqresps, nonlinearities)
+function [resp, t] = buildresp(signal, noise, f, names, freqresps, F, NL)
 
-resp = struct('name', names{1}, 'freqresp', freqresps{1}, 'nonlinearity', nonlinearities{1}, 'signal_freq', input_signal, 'signal_time', fourierseries2time(abs(input_signal), angle(input_signal), f));
+resp = struct('name', names{1}, 'freqresp', freqresps{1}, 'nonlinearity', NL{1}, 'signal_freq', signal, 'signal_time', fourierseries2time(abs(signal), angle(signal), f), 'noise_psd', noise);
+
+physical_constants;
+df = f(2)-f(1);
+R0 = 50;
 
 for i=2:length(names)
     resp(i).name = names{i};
     resp(i).freqresp = resp(i-1).freqresp.*freqresps{i};
-    resp(i).nonlinearity = nonlinearities{i};
     resp(i).signal_freq = resp(i).freqresp.*resp(1).signal_freq;
     [resp(i).signal_time, t] = fourierseries2time(abs(resp(i).signal_freq), angle(resp(i).signal_freq), f);
     
-    if ~isempty(nonlinearities{i})
-        resp(i).signal_time = polyval(resp(i).nonlinearity, resp(i).signal_time);
+    if ~isempty(NL{i})
+        resp(i).signal_time = polyval(NL{i}, resp(i).signal_time);
     end
+    
+    if isempty(F{i})
+        F{i} = 1./abs(freqresps{i}).^2;
+    end
+
+    % Power gain (G) from amplitude frequency response
+    G = abs(freqresps{i}).^2;
+    
+    % Reference noise power spectral density of a matched circuit at 290 K [W]
+    refnoise_psd = repmat(K*290, 1, length(f));
+    
+    % From the IEEE's noise factor (F) definition:
+    %
+    %   F = Na + K*To*B*G
+    %       -------------
+    %          K*To*B*G
+    %
+    % where K*To with To = 290 K is reference thermal noise (-174 dBm/Hz),
+    % B is the bandwidth of interest, G is the stage's power gain and Na 
+    % is the noise power added by the stage.
+    %
+    % Hence the PSD of added noise is given by:
+    %
+    %   Na/B = (F-1)*K*To*G
+    Na_psd = (F{i}-1).*refnoise_psd.*G;
+    
+    % Noise propagated from previous stage (noise at input times gain)
+    NiG_psd = (resp(i-1).noise_psd.*abs(freqresps{i})).^2;
+
+    % Since the propagated noise and the stage own noise are uncorrelated,
+    % their PSD are summed to give the total stage noise PSD
+    resp(i).noise_psd = NiG_psd + Na_psd;
+    
+    resp(i).noise_Vrms = sqrt(resp(i).noise_psd*R0*df);
 end
