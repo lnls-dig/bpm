@@ -127,35 +127,52 @@ nonlinearities = {[], ...
                   adc_nonlinearity, ...
                   };
 
-[resp, t] = buildresp(beam_current, zeros(1,length(f)), f, names, freqresps, noisefactors, nonlinearities);
+[resp, t] = buildresp(beam_current, zeros(1,length(f)), f, R0, names, freqresps, noisefactors, nonlinearities);
 
-function [resp, t] = buildresp(signal, noise, f, names, freqresps, F, NL)
+function [resp, t] = buildresp(signal, noise_psd, f, R0, names, freqresps, F, NL)
 
-resp = struct('name', names{1}, 'freqresp', freqresps{1}, 'nonlinearity', NL{1}, 'signal_freq', signal, 'signal_time', fourierseries2time(abs(signal), angle(signal), f), 'noise_psd', noise);
-
-physical_constants;
 df = f(2)-f(1);
-R0 = 50;
+Fs = 2*f(end) + df;
+
+signal_time = fourierseries2time(abs(signal), angle(signal), f, 2*length(f)-1)';
+
+[noise_freq_amp, ~, noise_freq_ph] = fourierseries(randn(1, 2*length(f)-1)*sqrt(Fs), Fs);
+noise_freq = noise_freq_amp'.*exp(1j*noise_freq_ph').*sqrt(noise_psd);
+noise_time = fourierseries2time(abs(noise_freq), angle(noise_freq), f, 2*length(f)-1)';
+
+noise_Vrms = sqrt(noise_psd*R0*df);
+
+resp = struct('name', names{1}, ...
+              'freqresp', freqresps{1}, ...
+              'nonlinearity', NL{1}, ...
+              'signal_freq', signal, ...
+              'signal_time', signal_time, ...
+              'noise_psd', noise_psd, ...
+              'noise_Vrms', noise_Vrms, ...
+              'noise_freq', noise_freq, ...
+              'noise_time', noise_time  ...
+              );
+
+% Reference noise power spectral density of a matched circuit at 290 K [W]
+physical_constants;
+refnoise_psd = repmat(K*290, 1, length(f));
 
 for i=2:length(names)
     resp(i).name = names{i};
     resp(i).freqresp = resp(i-1).freqresp.*freqresps{i};
     resp(i).signal_freq = resp(i).freqresp.*resp(1).signal_freq;
-    [resp(i).signal_time, t] = fourierseries2time(abs(resp(i).signal_freq), angle(resp(i).signal_freq), f);
+    [resp(i).signal_time, t] = fourierseries2time(abs(resp(i).signal_freq), angle(resp(i).signal_freq), f, 2*length(f)-1);
     
     if ~isempty(NL{i})
         resp(i).signal_time = polyval(NL{i}, resp(i).signal_time);
     end
     
-    if isempty(F{i})
-        F{i} = 1./abs(freqresps{i}).^2;
-    end
-
     % Power gain (G) from amplitude frequency response
     G = abs(freqresps{i}).^2;
-    
-    % Reference noise power spectral density of a matched circuit at 290 K [W]
-    refnoise_psd = repmat(K*290, 1, length(f));
+
+    if isempty(F{i})
+        F{i} = 1./G;
+    end
     
     % From the IEEE's noise factor (F) definition:
     %
@@ -178,6 +195,18 @@ for i=2:length(names)
     % Since the propagated noise and the stage own noise are uncorrelated,
     % their PSD are summed to give the total stage noise PSD
     resp(i).noise_psd = NiG_psd + Na_psd;
+    
+    [noise_freq_amp, ~, noise_freq_ph] = fourierseries(randn(1, 2*length(f)-1)*sqrt(Fs), Fs);
+    Na_noise_freq = noise_freq_amp'.*exp(1j*noise_freq_ph').*sqrt(Na_psd);
+    Na_noise_time = fourierseries2time(abs(Na_noise_freq), angle(Na_noise_freq), f, 2*length(f)-1)';
+    
+    NiG_noise_freq = resp(i-1).noise_freq.*sqrt(G);
+    NiG_noise_time = fourierseries2time(abs(NiG_noise_freq), angle(NiG_noise_freq), f, 2*length(f)-1)';
+
+    resp(i).noise_time = Na_noise_time + NiG_noise_time;
+    
+    [amp, ~ , ph] = fourierseries(resp(i).noise_time, Fs);
+    resp(i).noise_freq = (amp.*exp(1j*ph))';
     
     resp(i).noise_Vrms = sqrt(resp(i).noise_psd*R0*df);
 end
