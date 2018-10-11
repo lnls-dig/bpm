@@ -1,19 +1,17 @@
-function [resp, t] = sirius_button_bpm_resp(beam_current, f, beampos, att1_val)
+function [resp, t] = sirius_button_bpm_resp(beam_current, f, beampos, att1_val, machine)
 
-sirius_parameters;
-sirius_bpmparameters;
 physical_constants;
 
-fe = bpm.cable.fe;
-cablelength = bpm.cable.length;
-beta = storagering.beta;
-R0 = bpm.pickup.button.R0;
-bd = bpm.pickup.button.diameter;
-frf = storagering.frf;
+fe = machine.bpm.cable.fe;
+cablelength = machine.bpm.cable.length;
+beta = machine.beta;
+R0 = machine.bpm.pickup.button.R0;
+bd = machine.bpm.pickup.button.diameter;
+frf = machine.frf;
 
 % Beam current to image current response
 % Choose button with the highest signal
-CovF = beamcoverage(bpm.pickup, beampos, 500);
+CovF = beamcoverage(machine.bpm.pickup, beampos, 500);
 beam2bpm_current = max(CovF)*bd/(beta*c)*(1j*2*pi*f);
 
 % Button impedance response
