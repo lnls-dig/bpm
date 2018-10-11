@@ -3,7 +3,7 @@ function alpha = calcampnl(CP, G, R, port, comp_dB)
 %   third-order polynomial non-linearity model for the amplifier's voltage
 %   transfer function: Vout = Gain*Vin*(1-alpha*Vin^2)
 %
-%   alpha = calcampnl(P1dB, R)
+%   alpha = calcampnl(CP, G, R, port, comp_dB)
 %
 %   Inputs:
 %       CP:         compression point [dBm]
