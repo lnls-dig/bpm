@@ -13,10 +13,10 @@ if nargin < 5
     method = 'delta/sigma';
 end
 
-a = abcd(:,1);
-b = abcd(:,2);
-c = abcd(:,3);
-d = abcd(:,4);
+a = abcd(:,1:4:end);
+b = abcd(:,2:4:end);
+c = abcd(:,3:4:end);
+d = abcd(:,4:4:end);
 
 aMc = a-c;
 bMd = b-d;
@@ -29,14 +29,19 @@ cPd = c+d;
 sum = aPb+cPd;
 
 if strcmpi(method, 'delta/sigma')
-    xy = [Kx*(aMc-bMd)./sum Ky*(aMc+bMd)./sum];
+    x = Kx*(aMc-bMd)./sum;
+    y = Ky*(aMc+bMd)./sum;
     q = (aMb+cMd)./sum;
 elseif strcmpi(method, 'partial delta/sigma')
     aPc = a+c;
-    bPd = b+d;
-    
-    xy = 0.5*[Kx*(aMc./aPc - bMd./bPd) Ky*(aMc./aPc + bMd./bPd)];
+    bPd = b+d;    
+    x = 0.5*Kx*(aMc./aPc - bMd./bPd);
+    y = 0.5*Ky*(aMc./aPc + bMd./bPd);
     q = 0.5*(aMb./aPb + cMd./cPd);
 end
+
+xy = zeros(size(x,1), 2*size(x,2));
+xy(:,1:2:end) = x;
+xy(:,2:2:end) = y;
 
 s = Ks*sum;
