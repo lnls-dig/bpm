@@ -44,18 +44,8 @@ Q = zeros(npts, 4);
 if strcmpi(pickup.chamber.type, 'circular')
     bd = pickup.button.diameter;
     r = pickup.chamber.radius;
-    [theta,d] = cart2pol(x,y);
-    
-    dphi = bd/r*linspace(-0.5, 0.5, n)';
-    delta_phi = bd/r/(n-1);
-    
     button_angle = [pi/4 3*pi/4 5*pi/4 7*pi/4];
-
-    for i=1:npts
-        for j=1:length(button_angle)
-            Q(i,j) = trapz(axdensity(d(i), theta(i), r, button_angle(j) + dphi))*delta_phi;
-        end
-    end
+    Q = chargecirc(x, y, bd, r, button_angle);
 else
     % Boundary Element Numerical Method
     % References: A. Stella, "ANALYSIS OF THE DAPHNE BEAM POSITION MONITOR WITH A BOUNDARY ELEMENT METHOD", Daphne Note CD-10 (1997)
