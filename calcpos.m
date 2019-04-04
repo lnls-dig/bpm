@@ -13,10 +13,17 @@ if nargin < 5
     method = 'delta/sigma';
 end
 
-a = abcd(:,1:4:end);
-b = abcd(:,2:4:end);
-c = abcd(:,3:4:end);
-d = abcd(:,4:4:end);
+if ismatrix(abcd)
+    a = abcd(:,1:4:end);
+    b = abcd(:,2:4:end);
+    c = abcd(:,3:4:end);
+    d = abcd(:,4:4:end);
+elseif ndims(abcd) == 3
+    a = abcd(:,:,1);
+    b = abcd(:,:,2);
+    c = abcd(:,:,3);
+    d = abcd(:,:,4);
+end
 
 aMc = a-c;
 bMd = b-d;
@@ -52,8 +59,14 @@ elseif strcmpi(method, 'pi/pi')
     q = a./b + c./d;
 end
 
-xy = zeros(size(x,1), 2*size(x,2));
-xy(:,1:2:end) = x;
-xy(:,2:2:end) = y;
+if ismatrix(abcd)
+    xy = zeros(size(x,1), 2*size(x,2));
+    xy(:,1:2:end) = x;
+    xy(:,2:2:end) = y;
+elseif ndims(abcd) == 3
+    xy = zeros([size(x) 2]);
+    xy(:,:,1) = x;
+    xy(:,:,2) = y;
+end
 
 s = Ks*sum;
