@@ -68,7 +68,7 @@ if ismatrix(abcd)
     xy = zeros(size(x,1), 2*size(x,2));
     xy(:,1:2:end) = x;
     xy(:,2:2:end) = y;
-elseif ndims(abcd) == 3
+else
     xy = zeros([size(x) 2]);
     S = struct('type', '()', 'subs', {repmat({':'},1,ndims(xy))});
     S.subs{end} = 1;
