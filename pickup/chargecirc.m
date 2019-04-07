@@ -28,7 +28,7 @@ phi = permute(phi, [2:ndims_xy+1 1]);
 
 theta = repmat(theta, [ones(1, ndims_xy) length(phi)]);
 d = repmat(d, [ones(1, ndims_xy) length(phi)]);
-phi = repmat(phi, [size(x) 1]);
+phi = repmat(phi, size(x));
 
 dphi1 = -0.5*l/r;
 dphi2 = 0.5*l/r;

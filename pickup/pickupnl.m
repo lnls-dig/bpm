@@ -45,8 +45,8 @@ Sdy = (xy_bpm_dy2-xy_bpm_dy1)/dxy_diff;
 Kdx = 1./Sdx;
 Kdy = 1./Sdy;
 
-Sideal_dx = cat(3, repmat(1/K, [size(x) 1]), zeros([size(x) 1]));
-Sideal_dy = cat(3, zeros([size(x) 1]), repmat(1/K, [size(x) 1]));
+Sideal_dx = cat(3, repmat(1/K, size(x)), zeros(size(x)));
+Sideal_dy = cat(3, zeros(size(x)), repmat(1/K, size(x)));
 Sx_error = (Sdx-Sideal_dx)/S*100;
 Sy_error = (Sdy-Sideal_dy)/S*100;
 S_error = cat(3, Sx_error, Sy_error);
