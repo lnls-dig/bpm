@@ -18,11 +18,16 @@ if ismatrix(abcd)
     b = abcd(:,2:4:end);
     c = abcd(:,3:4:end);
     d = abcd(:,4:4:end);
-elseif ndims(abcd) == 3
-    a = abcd(:,:,1);
-    b = abcd(:,:,2);
-    c = abcd(:,:,3);
-    d = abcd(:,:,4);
+else
+    S = struct('type', '()', 'subs', {repmat({':'},1,ndims(abcd))});
+    S.subs{end} = 1;
+    a = subsref(abcd,S);
+    S.subs{end} = 2;
+    b = subsref(abcd,S);
+    S.subs{end} = 3;
+    c = subsref(abcd,S);
+    S.subs{end} = 4;
+    d = subsref(abcd,S);
 end
 
 aMc = a-c;
@@ -65,8 +70,11 @@ if ismatrix(abcd)
     xy(:,2:2:end) = y;
 elseif ndims(abcd) == 3
     xy = zeros([size(x) 2]);
-    xy(:,:,1) = x;
-    xy(:,:,2) = y;
+    S = struct('type', '()', 'subs', {repmat({':'},1,ndims(xy))});
+    S.subs{end} = 1;
+    xy = subsasgn(xy,S,x);
+    S.subs{end} = 2;
+    xy = subsasgn(xy,S,y);
 end
 
 s = Ks*sum;
