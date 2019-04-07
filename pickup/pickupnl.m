@@ -21,7 +21,9 @@ rgy = -lim:dy_grid:lim;
 [x, y] = meshgrid(rgx,rgy);
 xy_beam = [x y];
 
-S = sqrt(2)/r;
+alpha = bd/r;
+
+S = sqrt(2)/r*2*sin(alpha/2)/alpha;
 K = 1/S;
 
 method = 'partial delta/sigma';
