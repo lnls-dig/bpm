@@ -7,19 +7,51 @@ r = 18.1e-3;                            % BPM radius [m] - Booster
 %bd = 6e-3;                             % BPM button diameter [m] - Storage Ring
 %r = 12e-3;                             % BPM radius [m] - Storage Ring
 pu_ang = [pi/4 3*pi/4 5*pi/4 7*pi/4];   % Angle of BPM pick-ups [rad]
+sigmax = 4e-3;
+sigmay = 2e-3;
+nparticles = 1;
 
 %%
-lim = 12e-3;                            % Booster
+lim = 6e-3;                            % Booster
 %lim = 8e-3;                            % Storage Ring
-dx_grid = 0.5e-3;
-dy_grid = 0.5e-3;
+dx_grid = 1e-3;
+dy_grid = 1e-3;
 
 dxy_diff = 1e-9;
 
 rgx = -lim:dx_grid:lim;
 rgy = -lim:dy_grid:lim;
 [x, y] = meshgrid(rgx,rgy);
-xy_beam = [x y];
+
+nx = length(rgx);
+ny = length(rgy);
+
+if nparticles == 1
+    sigmax = 0;
+    sigmay = 0;
+end
+
+xx = repmat(sigmax*randn(1,1,nparticles), [nx ny]);
+yy = repmat(sigmay*randn(1,1,nparticles), size(x));
+
+x = repmat(x, [1 1 nparticles]);
+y = repmat(y, [1 1 nparticles]);
+
+xx = x + xx;
+yy = y + yy;
+
+dist = sqrt(xx.^2 + yy.^2);
+aaa = find(dist > r);
+xx(aaa) = x(aaa);
+yy(aaa) = y(aaa);
+
+std_x = std(xx,1,3);
+std_y = std(xx,1,3);
+
+x = xx;
+y = yy;
+
+xy_beam = cat(4,x,y);
 
 alpha = bd/r;
 
@@ -28,11 +60,17 @@ K = 1/S;
 
 method = 'partial delta/sigma';
 
-abcd_dx1 = chargecirc(x-dxy_diff/2, y, bd, r, pu_ang);
-abcd_dx2 = chargecirc(x+dxy_diff/2, y, bd, r, pu_ang);
-
-abcd_dy1 = chargecirc(x, y-dxy_diff/2, bd, r, pu_ang);
-abcd_dy2 = chargecirc(x, y+dxy_diff/2, bd, r, pu_ang);
+if nparticles > 1
+    abcd_dx1 = squeeze(sum(chargecirc(x-dxy_diff/2, y, bd, r, pu_ang),3))/nparticles;
+    abcd_dx2 = squeeze(sum(chargecirc(x+dxy_diff/2, y, bd, r, pu_ang),3))/nparticles;
+    abcd_dy1 = squeeze(sum(chargecirc(x, y-dxy_diff/2, bd, r, pu_ang),3))/nparticles;
+    abcd_dy2 = squeeze(sum(chargecirc(x, y+dxy_diff/2, bd, r, pu_ang),3))/nparticles;
+else
+    abcd_dx1 = chargecirc(x-dxy_diff/2, y, bd, r, pu_ang);
+    abcd_dx2 = chargecirc(x+dxy_diff/2, y, bd, r, pu_ang);
+    abcd_dy1 = chargecirc(x, y-dxy_diff/2, bd, r, pu_ang);
+    abcd_dy2 = chargecirc(x, y+dxy_diff/2, bd, r, pu_ang);
+end
 
 xy_bpm_dx1 = calcpos(abcd_dx1, 1, 1, 1, method);
 xy_bpm_dx2 = calcpos(abcd_dx2, 1, 1, 1, method);
@@ -47,8 +85,8 @@ Sdy = (xy_bpm_dy2-xy_bpm_dy1)/dxy_diff;
 Kdx = 1./Sdx;
 Kdy = 1./Sdy;
 
-Sideal_dx = cat(3, repmat(1/K, size(x)), zeros(size(x)));
-Sideal_dy = cat(3, zeros(size(x)), repmat(1/K, size(x)));
+Sideal_dx = cat(3, repmat(1/K, [nx ny]), zeros([nx ny]));
+Sideal_dy = cat(3, zeros([nx ny]), repmat(1/K, [nx ny]));
 Sx_error = (Sdx-Sideal_dx)/S*100;
 Sy_error = (Sdy-Sideal_dy)/S*100;
 S_error = cat(3, Sx_error, Sy_error);
@@ -77,8 +115,6 @@ levels = { ...
     -200:5:200; ...
     };
 
-bpm_body = r_mm*exp(-1j*linspace(0,2*pi,1000));
-bpm_pu = r_mm*exp(-1j*(repmat(linspace(-bd/r/2,bd/r/2,100)',1,size(pu_ang,2))+repmat(pu_ang, 100, 1)));
 
 for i=1:size(S_error,3)
     subplot(2,2,i);
