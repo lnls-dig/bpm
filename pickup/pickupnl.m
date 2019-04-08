@@ -61,17 +61,20 @@ K = 1/S;
 method = 'partial delta/sigma';
 
 if np > 1
+    abcd = squeeze(sum(chargecirc(xp, yp, bd, r, pu_ang),3))/np;
     abcd_dx1 = squeeze(sum(chargecirc(xp-dxy_diff/2, yp, bd, r, pu_ang),3))/np;
     abcd_dx2 = squeeze(sum(chargecirc(xp+dxy_diff/2, yp, bd, r, pu_ang),3))/np;
     abcd_dy1 = squeeze(sum(chargecirc(xp, yp-dxy_diff/2, bd, r, pu_ang),3))/np;
     abcd_dy2 = squeeze(sum(chargecirc(xp, yp+dxy_diff/2, bd, r, pu_ang),3))/np;
 else
+    abcd = chargecirc(xp, yp, bd, r, pu_ang);
     abcd_dx1 = chargecirc(xp-dxy_diff/2, yp, bd, r, pu_ang);
     abcd_dx2 = chargecirc(xp+dxy_diff/2, yp, bd, r, pu_ang);
     abcd_dy1 = chargecirc(xp, yp-dxy_diff/2, bd, r, pu_ang);
     abcd_dy2 = chargecirc(xp, yp+dxy_diff/2, bd, r, pu_ang);
 end
 
+xy_bpm = calcpos(abcd, K, K, 1, method);
 xy_bpm_dx1 = calcpos(abcd_dx1, 1, 1, 1, method);
 xy_bpm_dx2 = calcpos(abcd_dx2, 1, 1, 1, method);
 xy_bpm_dy1 = calcpos(abcd_dy1, 1, 1, 1, method);
@@ -88,7 +91,19 @@ Sx_factor = Sdx/S;
 Sy_factor = Sdy/S;
 S_factor = cat(3, Sx_factor, Sy_factor);
 
+% Calculate position error
+xy_error = xy_beam - xy_bpm;
+xy_dist_error = sqrt(xy_error(:,:,1).^2 + xy_error(:,:,2).^2);
+
 %% Plots
+rgx_mm = rgx/1e-3;
+rgy_mm = rgy/1e-3;
+r_mm = r/1e-3;
+xy_error_mm = xy_error/1e-3;
+xy_dist_error_mm = xy_dist_error/1e-3;
+
+bpm_body = r_mm*exp(-1j*linspace(0,2*pi,1000));
+bpm_pu = r_mm*exp(-1j*(repmat(linspace(-bd/r/2,bd/r/2,100)',1,size(pu_ang,2))+repmat(pu_ang, 100, 1))); 
 
 % Plot 1
 title_persubplot = { ...
@@ -112,9 +127,6 @@ levels_persubplot = { ...
     -2:0.05:2; ...
     };
 
-bpm_body = r_mm*exp(-1j*linspace(0,2*pi,1000));
-bpm_pu = r_mm*exp(-1j*(repmat(linspace(-bd/r/2,bd/r/2,100)',1,size(pu_ang,2))+repmat(pu_ang, 100, 1))); 
-
 figure;
 zlabel('sens. X to dx');
 for i=1:size(S_factor,3)
@@ -129,10 +141,39 @@ for i=1:size(S_factor,3)
 end
 
 % Plot 2
-rgx_mm = rgx/1e-3;
-rgy_mm = rgy/1e-3;
-r_mm = r/1e-3;
+figure;
+surf(rgx_mm, rgy_mm, xy_dist_error_mm);
+hold all; grid on;
+plot(bpm_body, 'k');
+plot(bpm_pu, 'k', 'LineWidth', 4);
+xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Distance to beam position [mm]'); title('Distance error ||xy_{beam} - xy_{BPM}|| [mm]');
+colorbar; colormap('jet');
+axis equal;
+view(0,90);
 
+% Plot 3
+figure;
+surf(rgx_mm, rgy_mm, xy_error_mm(:,:,1));
+hold all; grid on;
+plot(bpm_body, 'k');
+plot(bpm_pu, 'k', 'LineWidth', 4);
+xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X error [mm]'); title('X error (x_{beam} - x_{BPM}) [mm]');
+colorbar; colormap('jet');
+axis equal;
+view(0,90);
+
+% Plot 4
+figure;
+surf(rgx_mm, rgy_mm, xy_error_mm(:,:,2));
+hold all; grid on;
+plot(bpm_body, 'k');
+plot(bpm_pu, 'k', 'LineWidth', 4);
+xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Y erro [mm]'); title('Y error (y_{beam} - y_{BPM}) [mm]');
+colorbar; colormap('jet');
+axis equal;
+view(0,90);
+
+% Plot 5
 if verify_std_mean
     figure;
     subplot(2,2,1); surf(rgx_mm, rgy_mm, stdx/sigmax); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X std verification');
