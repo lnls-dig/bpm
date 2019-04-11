@@ -1,10 +1,10 @@
 function coeff = fit2dsvd(x, y, z, coeff_desc, cond_tol)
 
-if nargin < 5
+if nargin < 5 || isempty(cond_tol)
     cond_tol = Inf;
 end
 
-M = fit2dsvdeval(x,y,coeff_desc);
+M = fit2dsvdmatrix(x,y,coeff_desc);
 
 z = z(:);
 
