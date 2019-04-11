@@ -1,4 +1,4 @@
-function [xy, q, s] = calcpos(abcd, Kx, Ky, Ks, method)
+function [xy, q, s] = calcpos(abcd, Kx, Ky, Ks, method, polynomial)
 
 if nargin < 2
     Kx = 1;
@@ -11,6 +11,9 @@ if nargin < 4
 end
 if nargin < 5
     method = 'delta/sigma';
+end
+if nargin < 6
+    polynomial = [];
 end
 
 if ismatrix(abcd)
@@ -62,6 +65,13 @@ elseif strcmpi(method, 'pi/pi')
     x = 0.125*Kx*(aDc-1./aDc-(bDd-1./bDd));
     y = 0.125*Ky*(aDc-1./aDc+bDd-1./bDd);
     q = a./b + c./d;
+end
+
+if ~isempty(polynomial)
+    x_ = fit2dsvdeval(x, y, polynomial.x.coeff, polynomial.x.desc);
+    y_ = fit2dsvdeval(x, y, polynomial.y.coeff, polynomial.y.desc);
+    x = x_;
+    y = y_;
 end
 
 if ismatrix(abcd)
