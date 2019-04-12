@@ -1,4 +1,8 @@
-function poly = circbpmfit(npoly, r, bd, pu_ang, method, roix, roiy)
+function poly = circbpmfit(npoly, r, bd, pu_ang, method, roix, roiy, Wspec)
+
+if nargin < 8
+    Wspec = [];
+end
 
 [x, y] = meshgrid(roix,roiy);
 abcd = chargecirc(x, y, bd, r, pu_ang);
@@ -28,26 +32,23 @@ coeff_desc_sum = [aux1(:) aux2(:)];
 coeff_desc_q = [aux1(:) aux2(:)];
 
 %sum_bpm = sum_bpm*pi/2/bd*r;
+if ~isempty(Wspec)
+    [~,reorder] = sort(Wspec(:,1));
+    Wspec = Wspec(reorder(end:-1:1),:);
+    
+    W = ones(size(x));
+    for i=1:size(Wspec,1)
+        W(roix >= -Wspec(i,1) & roix <= Wspec(i,1), roiy >= -Wspec(i,1) & roiy <= Wspec(i,1)) = Wspec(i,2);
+    end
+else
+    W = [];
+end
 
-W = 1*ones(size(x));
-% W(sqrt(x.^2+y.^2)<10e-3) = 1e1;
-% W(sqrt(x.^2+y.^2)<8e-3) = 1e2;
-% W(sqrt(x.^2+y.^2)<6e-3) = 1e3;
-% W(sqrt(x.^2+y.^2)<4e-3) = 1e4;
-% W(sqrt(x.^2+y.^2)<2e-3) = 1e5;
-W(roix <= 10e-3 & roix >= -10e-3, roiy <= 10e-3 & roiy >= -10e-3) = 1e1;
-W(roix <= 8e-3 & roix >= -8e-3, roiy <= 8e-3 & roiy >= -8e-3) = 1e2;
-W(roix <= 6e-3 & roix >= -6e-3, roiy <= 6e-3 & roiy >= -6e-3) = 1e3;
-W(roix <= 4e-3 & roix >= -4e-3, roiy <= 4e-3 & roiy >= -4e-3) = 1e4;
-W(roix <= 2e-3 & roix >= -2e-3, roiy <= 2e-3 & roiy >= -2e-3) = 1e5;
-
-%figure; surf(x,y,W)
-
-poly.x.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), x, coeff_desc_x, 1e17, W);
+poly.x.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), x, coeff_desc_x, Inf, W);
 poly.x.desc = coeff_desc_x;
 poly.y.coeff = poly.x.coeff;
 poly.y.desc = coeff_desc_y;
-poly.q.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), q_bpm, coeff_desc_q, 1e17, W);
+poly.q.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), q_bpm, coeff_desc_q, Inf, W);
 poly.q.desc = coeff_desc_q;
-poly.sum.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), sum_bpm, coeff_desc_sum, 1e17, W);
+poly.sum.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), sum_bpm, coeff_desc_sum, Inf, W);
 poly.sum.desc = coeff_desc_sum;
