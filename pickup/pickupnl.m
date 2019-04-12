@@ -23,6 +23,8 @@ max_poserror_mm = 60e-3;
 max_Serror_sup = 0;
 max_Serror_inf = 0.05;
 max_couperror = 0.05;
+max_sumerror = 0.01;
+max_qerror = 0.01;
 
 roix = -lim_fit:step_fit:lim_fit;
 roiy = roix;
@@ -84,17 +86,21 @@ else
 end
 
 if isempty(polynomial)
-    xy_bpm     = calcpos(abcd,     K, K, 1, method);
-    xy_bpm_dx1 = calcpos(abcd_dx1, 1, 1, 1, method);
-    xy_bpm_dx2 = calcpos(abcd_dx2, 1, 1, 1, method);
-    xy_bpm_dy1 = calcpos(abcd_dy1, 1, 1, 1, method);
-    xy_bpm_dy2 = calcpos(abcd_dy2, 1, 1, 1, method);
+    [xy_bpm    , q_bpm,     sum_bpm]     = calcpos(abcd,     K, K, 1, method);
+    [xy_bpm_dx1, q_bpm_dx1, sum_bpm_dx1] = calcpos(abcd_dx1, 1, 1, 1, method);
+    [xy_bpm_dx2, q_bpm_dx2, sum_bpm_dx2] = calcpos(abcd_dx2, 1, 1, 1, method);
+    [xy_bpm_dy1, q_bpm_dy1, sum_bpm_dy1] = calcpos(abcd_dy1, 1, 1, 1, method);
+    [xy_bpm_dy2, q_bpm_dy2, sum_bpm_dy2] = calcpos(abcd_dy2, 1, 1, 1, method);
 else
-    xy_bpm     = calcpos(abcd, 1, 1, 1, method, polynomial);
-    xy_bpm_dx1 = calcpos(abcd_dx1, 1, 1, 1, method, polynomial)/polynomial.x.coeff(1);
-    xy_bpm_dx2 = calcpos(abcd_dx2, 1, 1, 1, method, polynomial)/polynomial.x.coeff(1);
-    xy_bpm_dy1 = calcpos(abcd_dy1, 1, 1, 1, method, polynomial)/polynomial.x.coeff(1);
-    xy_bpm_dy2 = calcpos(abcd_dy2, 1, 1, 1, method, polynomial)/polynomial.x.coeff(1);
+    [xy_bpm    , q_bpm,     sum_bpm]     = calcpos(abcd,     1, 1, 1, method, polynomial);
+    [xy_bpm_dx1, q_bpm_dx1, sum_bpm_dx1] = calcpos(abcd_dx1, 1, 1, 1, method, polynomial);
+    [xy_bpm_dx2, q_bpm_dx2, sum_bpm_dx2] = calcpos(abcd_dx2, 1, 1, 1, method, polynomial);
+    [xy_bpm_dy1, q_bpm_dy1, sum_bpm_dy1] = calcpos(abcd_dy1, 1, 1, 1, method, polynomial);
+    [xy_bpm_dy2, q_bpm_dy2, sum_bpm_dy2] = calcpos(abcd_dy2, 1, 1, 1, method, polynomial);
+    xy_bpm_dx1 = xy_bpm_dx1/polynomial.x.coeff(1);
+    xy_bpm_dx2 = xy_bpm_dx2/polynomial.x.coeff(1);
+    xy_bpm_dy1 = xy_bpm_dy1/polynomial.x.coeff(1);
+    xy_bpm_dy2 = xy_bpm_dy2/polynomial.x.coeff(1);   
 end
 
 % Calculate BPM sensitivity
@@ -107,6 +113,9 @@ Kdy = 1./Sdy;
 Sx_factor = Sdx/S;
 Sy_factor = Sdy/S;
 S_factor = cat(3, Sx_factor, Sy_factor);
+
+% Normalize sum
+sum_bpm = sum_bpm*pi/2/bd*r;
 
 % Calculate position error
 xy_error = xy_beam - xy_bpm;
@@ -185,6 +194,28 @@ axis equal;
 view(0,90);
 
 % Plot 5
+figure;
+surf(rgx_mm, rgy_mm, q_bpm);
+hold all; grid on;
+plot(bpm_body, 'k');
+plot(bpm_pu, 'k', 'LineWidth', 4);
+xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Q'); title('Q');
+colorbar; colormap('jet'); caxis([-max_qerror max_qerror]);
+axis equal;
+view(0,90);
+
+% Plot 6
+figure;
+surf(rgx_mm, rgy_mm, sum_bpm);
+hold all; grid on;
+plot(bpm_body, 'k');
+plot(bpm_pu, 'k', 'LineWidth', 4);
+xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Sum'); title('Sum');
+colorbar; colormap('jet'); caxis([1-max_sumerror 1+max_sumerror]);
+axis equal;
+view(0,90);
+
+% Plot 7
 if verify_std_mean
     figure;
     subplot(2,2,1); surf(rgx_mm, rgy_mm, stdx/sigmax); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X std verification');

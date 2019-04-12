@@ -4,6 +4,9 @@ function poly = circbpmfit(npoly, r, bd, pu_ang, method, roix, roiy)
 abcd = chargecirc(x, y, bd, r, pu_ang);
 [xy_bpm, q_bpm, sum_bpm] = calcpos(abcd, 1, 1, 1, method);
 
+% Normalize sum
+sum_bpm = sum_bpm*pi/2/bd*r;
+
 % Build polynomial coefficients
 npoly_xy = floor((npoly-1)/2)*2+1;
 coeff_desc_x = [];
@@ -20,6 +23,9 @@ coeff_desc_y = coeff_desc_x(:,[2 1]);
 
 [aux1,aux2] = meshgrid(0:2:npoly,0:2:npoly);
 coeff_desc_sum = [aux1(:) aux2(:)];
+
+[aux1,aux2] = meshgrid(1:2:npoly,1:2:npoly);
+coeff_desc_q = [aux1(:) aux2(:)];
 
 %sum_bpm = sum_bpm*pi/2/bd*r;
 
@@ -41,5 +47,7 @@ poly.x.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), x, coeff_desc_x, 1e17, W);
 poly.x.desc = coeff_desc_x;
 poly.y.coeff = poly.x.coeff;
 poly.y.desc = coeff_desc_y;
+poly.q.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), q_bpm, coeff_desc_q, 1e17, W);
+poly.q.desc = coeff_desc_q;
 poly.sum.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), sum_bpm, coeff_desc_sum, 1e17, W);
 poly.sum.desc = coeff_desc_sum;

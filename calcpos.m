@@ -68,6 +68,8 @@ elseif strcmpi(method, 'pi/pi')
 end
 
 if ~isempty(polynomial)
+    q = q - fit2dsvdeval(x/Kx, y/Ky, polynomial.q.coeff, polynomial.q.desc);
+    sum = sum./fit2dsvdeval(x/Kx, y/Ky, polynomial.sum.coeff, polynomial.sum.desc);
     x_ = fit2dsvdeval(x, y, polynomial.x.coeff, polynomial.x.desc);
     y_ = fit2dsvdeval(x, y, polynomial.y.coeff, polynomial.y.desc);
     x = x_;
