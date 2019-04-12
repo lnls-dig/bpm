@@ -173,7 +173,7 @@ figure;
 zlabel('sens. X to dx');
 for i=1:size(S_factor,3)
     subplot(2,2,i);
-    h = surf(rgx_mm, rgy_mm, S_factor(:,:,i));
+    h = surf(rgx_mm, rgy_mm, S_factor(:,:,i)); set(h, 'EdgeAlpha', 0.3);
     hold all; grid on;
     plot(bpm_body, 'k');
     plot(bpm_pu, 'k', 'LineWidth', 4);
@@ -185,7 +185,7 @@ end
 
 % Plot 2
 figure;
-h = surf(rgx_mm, rgy_mm, xy_dist_error_mm);
+h = surf(rgx_mm, rgy_mm, xy_dist_error_mm); set(h, 'EdgeAlpha', 0.3);
 hold all; grid on;
 plot(bpm_body, 'k');
 plot(bpm_pu, 'k', 'LineWidth', 4);
@@ -196,7 +196,7 @@ view(0,90);
 
 % Plot 3
 figure;
-surf(rgx_mm, rgy_mm, xy_error_mm(:,:,1));
+h = surf(rgx_mm, rgy_mm, xy_error_mm(:,:,1)); set(h, 'EdgeAlpha', 0.3);
 hold all; grid on;
 plot(bpm_body, 'k');
 plot(bpm_pu, 'k', 'LineWidth', 4);
@@ -207,7 +207,7 @@ view(0,90);
 
 % Plot 4
 figure;
-surf(rgx_mm, rgy_mm, xy_error_mm(:,:,2));
+h = surf(rgx_mm, rgy_mm, xy_error_mm(:,:,2)); set(h, 'EdgeAlpha', 0.3);
 hold all; grid on;
 plot(bpm_body, 'k');
 plot(bpm_pu, 'k', 'LineWidth', 4);
@@ -218,7 +218,7 @@ view(0,90);
 
 % Plot 5
 figure;
-surf(rgx_mm, rgy_mm, q_bpm);
+h = surf(rgx_mm, rgy_mm, q_bpm); set(h, 'EdgeAlpha', 0.3);
 hold all; grid on;
 plot(bpm_body, 'k');
 plot(bpm_pu, 'k', 'LineWidth', 4);
@@ -229,7 +229,7 @@ view(0,90);
 
 % Plot 6
 figure;
-surf(rgx_mm, rgy_mm, sum_bpm);
+h = surf(rgx_mm, rgy_mm, sum_bpm); set(h, 'EdgeAlpha', 0.3);
 hold all; grid on;
 plot(bpm_body, 'k');
 plot(bpm_pu, 'k', 'LineWidth', 4);
@@ -241,8 +241,8 @@ view(0,90);
 % Plot 7
 if verify_std_mean
     figure;
-    subplot(2,2,1); surf(rgx_mm, rgy_mm, stdx/sigmax); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X std verification');
-    subplot(2,2,2); surf(rgx_mm, rgy_mm, stdy/sigmay); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Y std verification');
-    subplot(2,2,3); surf(rgx_mm, rgy_mm, meanx./x); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X mean verification');
-    subplot(2,2,4); surf(rgx_mm, rgy_mm, meany./y); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Y mean verification');
+    subplot(2,2,1); h = surf(rgx_mm, rgy_mm, stdx/sigmax); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X std verification'); set(h, 'EdgeAlpha', 0.3);
+    subplot(2,2,2); h = surf(rgx_mm, rgy_mm, stdy/sigmay); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Y std verification'); set(h, 'EdgeAlpha', 0.3);
+    subplot(2,2,3); h = surf(rgx_mm, rgy_mm, meanx./x); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('X mean verification'); set(h, 'EdgeAlpha', 0.3);
+    subplot(2,2,4); h = surf(rgx_mm, rgy_mm, meany./y); xlabel('X [mm]'); ylabel('Y [mm]'); zlabel('Y mean verification'); set(h, 'EdgeAlpha', 0.3);
 end
