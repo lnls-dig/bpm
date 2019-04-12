@@ -84,7 +84,7 @@ else
 end
 
 if isempty(polynomial)
-    xy_bpm     = calcpos(abcd, 1, 1, 1, method);
+    xy_bpm     = calcpos(abcd,     K, K, 1, method);
     xy_bpm_dx1 = calcpos(abcd_dx1, 1, 1, 1, method);
     xy_bpm_dx2 = calcpos(abcd_dx2, 1, 1, 1, method);
     xy_bpm_dy1 = calcpos(abcd_dy1, 1, 1, 1, method);
