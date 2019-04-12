@@ -1,6 +1,8 @@
 % nrow = length(rgy)
 % ncol = length(rgx)
 
+unitconv = 1e9;                         % Set 1 for m or 1e9 for nm
+
 %% Parameters
 bd = 12e-3;                             % BPM button diameter [m] - Booster
 r = 18.1e-3;                            % BPM radius [m] - Booster
@@ -15,9 +17,27 @@ step_grid = 0.5e-3;
 method = 'partial delta/sigma';
 dxy_diff = 1e-9;
 verify_std_mean = true;
-
 lim_fit = 12e-3;
 step_fit = 0.5e-3;
+Wspec = [ ...
+    Inf   1e0; ...
+    10e-3 1e1; ...
+    8e-3  1e2; ...
+    6e-3  1e3; ...
+    4e-3  1e4; ...
+    2e-3  1e5; ...
+    ];
+
+bd = bd*unitconv;
+r = r*unitconv;
+sigmax = sigmax*unitconv;
+sigmay = sigmay*unitconv;
+lim = lim*unitconv;
+step_grid = step_grid*unitconv;
+dxy_diff = dxy_diff*unitconv;
+lim_fit = lim_fit*unitconv;
+step_fit = step_fit*unitconv;
+Wspec(:,1) = unitconv*Wspec(:,1);
 
 max_poserror_mm = 200e-3;
 max_Serror_sup = 0.05;
@@ -32,17 +52,6 @@ roiy = roix;
 npoly = 7;
 
 %% BPM polynomial fit
-Wspec = [ ...
-    Inf   1e0; ...
-    10e-3 1e1; ...
-    8e-3  1e2; ...
-    6e-3  1e3; ...
-    4e-3  1e4; ...
-    2e-3  1e5; ...
-    ];
-
-Wspec(:,1) = unitconv*Wspec(:,1);
-
 poly = circbpmfit(npoly, r, bd, pu_ang, method, roix, roiy, Wspec);
 polynomial = poly;
 
@@ -133,11 +142,11 @@ xy_error = xy_beam - xy_bpm;
 xy_dist_error = sqrt(xy_error(:,:,1).^2 + xy_error(:,:,2).^2);
 
 %% Plots
-rgx_mm = rg/1e-3;
-rgy_mm = rg/1e-3;
-r_mm = r/1e-3;
-xy_error_mm = xy_error/1e-3;
-xy_dist_error_mm = xy_dist_error/1e-3;
+rgx_mm = rg/1e-3/unitconv;
+rgy_mm = rg/1e-3/unitconv;
+r_mm = r/1e-3/unitconv;
+xy_error_mm = xy_error/1e-3/unitconv;
+xy_dist_error_mm = xy_dist_error/1e-3/unitconv;
 
 bpm_body = r_mm*exp(-1j*linspace(0,2*pi,1000));
 bpm_pu = r_mm*exp(-1j*(repmat(linspace(-bd/r/2,bd/r/2,100)',1,size(pu_ang,2))+repmat(pu_ang, 100, 1))); 
