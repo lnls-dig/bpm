@@ -8,19 +8,19 @@ r = 18.1e-3;                            % BPM radius [m] - Booster
 %r = 12e-3;                             % BPM radius [m] - Storage Ring
 pu_ang = [pi/4 3*pi/4 5*pi/4 7*pi/4];   % Angle of BPM pick-ups [rad]
 sigmax = 4e-3;                          % Horizontal beam size [m]
-sigmay = 0.1e-3;                          % Vertical beam size [m]
-np = 10e3;                              % Number of particles
+sigmay = 0.1e-3;                        % Vertical beam size [m]
+np = 1;                                 % Number of particles
 lim = 12e-3;
 step_grid = 0.5e-3;
 method = 'partial delta/sigma';
 dxy_diff = 1e-9;
 verify_std_mean = true;
 
-lim_fit = 9e-3;
-step_fit = 0.1e-3;
+lim_fit = 12e-3;
+step_fit = 0.5e-3;
 
-max_poserror_mm = 60e-3;
-max_Serror_sup = 0;
+max_poserror_mm = 200e-3;
+max_Serror_sup = 0.05;
 max_Serror_inf = 0.05;
 max_couperror = 0.05;
 max_sumerror = 0.01;
