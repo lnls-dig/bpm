@@ -12,7 +12,7 @@ pu_ang = [pi/4 3*pi/4 5*pi/4 7*pi/4];   % Angle of BPM pick-ups [rad]
 sigmax = 4e-3;                          % Horizontal beam size [m]
 sigmay = 0.1e-3;                        % Vertical beam size [m]
 np = 1;                                 % Number of particles
-lim = 12e-3;
+lim = 18e-3;
 step_grid = 0.5e-3;
 method = 'partial delta/sigma';
 dxy_diff = 1e-9;
@@ -80,14 +80,14 @@ yp = ym + sigmay*randn(nx,ny,np);
 
 dist = sqrt(xp.^2 + yp.^2);
 outofchamber = find(dist >= r);
-xp(outofchamber) = xm(outofchamber);
-yp(outofchamber) = ym(outofchamber);
+xp(outofchamber) = nan;
+yp(outofchamber) = nan;
 
 if verify_std_mean
-    stdx = std(xp,1,3);
-    stdy = std(yp,1,3);
-    meanx = mean(xp,3);
-    meany = mean(yp,3);
+    stdx = std(xp,1,3,'omitnan');
+    stdy = std(yp,1,3,'omitnan');
+    meanx = mean(xp,3,'omitnan');
+    meany = mean(yp,3,'omitnan');
 end
 
 alpha = bd/r;
@@ -95,11 +95,11 @@ S = sqrt(2)/r*2*sin(alpha/2)/alpha;
 K = 1/S;
 
 if np > 1
-    abcd     = squeeze(sum(chargecirc(xp, yp, bd, r, pu_ang),3))/np;
-    abcd_dx1 = squeeze(sum(chargecirc(xp-dxy_diff/2, yp, bd, r, pu_ang),3))/np;
-    abcd_dx2 = squeeze(sum(chargecirc(xp+dxy_diff/2, yp, bd, r, pu_ang),3))/np;
-    abcd_dy1 = squeeze(sum(chargecirc(xp, yp-dxy_diff/2, bd, r, pu_ang),3))/np;
-    abcd_dy2 = squeeze(sum(chargecirc(xp, yp+dxy_diff/2, bd, r, pu_ang),3))/np;
+    abcd     = squeeze(sum(chargecirc(xp, yp, bd, r, pu_ang),3,'omitnan'))/np;
+    abcd_dx1 = squeeze(sum(chargecirc(xp-dxy_diff/2, yp, bd, r, pu_ang),3,'omitnan'))/np;
+    abcd_dx2 = squeeze(sum(chargecirc(xp+dxy_diff/2, yp, bd, r, pu_ang),3,'omitnan'))/np;
+    abcd_dy1 = squeeze(sum(chargecirc(xp, yp-dxy_diff/2, bd, r, pu_ang),3,'omitnan'))/np;
+    abcd_dy2 = squeeze(sum(chargecirc(xp, yp+dxy_diff/2, bd, r, pu_ang),3,'omitnan'))/np;
 else
     abcd     = chargecirc(xp, yp, bd, r, pu_ang);
     abcd_dx1 = chargecirc(xp-dxy_diff/2, yp, bd, r, pu_ang);
