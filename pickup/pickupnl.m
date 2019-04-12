@@ -49,7 +49,10 @@ max_qerror = 0.01;
 roix = -lim_fit:step_fit:lim_fit;
 roiy = roix;
 
-npoly = 7;
+npoly.x = 9;
+npoly.y = npoly.x;
+npoly.q = 5;
+npoly.sum = 6;
 
 %% BPM polynomial fit
 poly = circbpmfit(npoly, r, bd, pu_ang, method, roix, roiy, Wspec);

@@ -12,12 +12,12 @@ abcd = chargecirc(x, y, bd, r, pu_ang);
 sum_bpm = sum_bpm*pi/2/bd*r;
 
 % Build polynomial coefficients
-npoly_xy = floor((npoly-1)/2)*2+1;
+npoly_xy = floor((npoly.x-1)/2)*2+1;
 coeff_desc_x = [];
 k = 1;
 m = 1;
 for i=1:2:npoly_xy
-    for j=0:2:npoly-m
+    for j=0:2:npoly_xy-m
         coeff_desc_x(k,:) = [i j];
     k = k+1;
     end
@@ -25,11 +25,11 @@ for i=1:2:npoly_xy
 end
 coeff_desc_y = coeff_desc_x(:,[2 1]);
 
-[aux1,aux2] = meshgrid(0:2:npoly,0:2:npoly);
-coeff_desc_sum = [aux1(:) aux2(:)];
-
-[aux1,aux2] = meshgrid(1:2:npoly,1:2:npoly);
+[aux1,aux2] = meshgrid(1:2:npoly.q,1:2:npoly.q);
 coeff_desc_q = [aux1(:) aux2(:)];
+
+[aux1,aux2] = meshgrid(0:2:npoly.sum,0:2:npoly.sum);
+coeff_desc_sum = [aux1(:) aux2(:)];
 
 %sum_bpm = sum_bpm*pi/2/bd*r;
 if ~isempty(Wspec)
