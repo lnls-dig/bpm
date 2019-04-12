@@ -5,7 +5,7 @@ unitconv = 1e9;                         % Set 1 for m or 1e9 for nm
 
 %% Parameters
 bd = 12e-3;                             % BPM button diameter [m] - Booster
-r = 18.1e-3;                            % BPM radius [m] - Booster
+r = 18.05e-3;                           % BPM radius [m] - Booster
 %bd = 6e-3;                             % BPM button diameter [m] - Storage Ring
 %r = 12e-3;                             % BPM radius [m] - Storage Ring
 pu_ang = [pi/4 3*pi/4 5*pi/4 7*pi/4];   % Angle of BPM pick-ups [rad]
