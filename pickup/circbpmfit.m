@@ -32,21 +32,25 @@ coeff_desc_q = [aux1(:) aux2(:)];
 coeff_desc_sum = [aux1(:) aux2(:)];
 
 %sum_bpm = sum_bpm*pi/2/bd*r;
-if ~isempty(Wspec)
-    [~,reorder] = sort(Wspec(:,1));
-    Wspec = Wspec(reorder(end:-1:1),:);
-    
+if isscalar(Wspec)
     W = ones(size(x));
-    for i=1:size(Wspec,1)
-        W(roix >= -Wspec(i,1) & roix <= Wspec(i,1), roiy >= -Wspec(i,1) & roiy <= Wspec(i,1)) = Wspec(i,2);
+    nx = size(x,2);
+    ny = size(x,1);
+    nx_mid = ceil(nx/2);
+    ny_mid = ceil(ny/2);
+    nmid = min(nx_mid,ny_mid);
+    w = [1./(8*(nmid-1:-1:1)) (abs(nx-ny)+1)].^Wspec;
+    for i=1:nmid
+        W(i       , i:nx-i+1) = w(i);
+        W(ny-i+1  , i:nx-i+1) = w(i);
+        W(i:ny-i+1, i)        = w(i);
+        W(i:ny-i+1, nx-i+1)   = w(i);
     end
-else
-    W = [];
 end
 
 poly.x.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), x, coeff_desc_x, Inf, W);
 poly.x.desc = coeff_desc_x;
-poly.y.coeff = poly.x.coeff;
+poly.y.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), y, coeff_desc_y, Inf, W);
 poly.y.desc = coeff_desc_y;
 poly.q.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), q_bpm, coeff_desc_q, Inf, W);
 poly.q.desc = coeff_desc_q;
