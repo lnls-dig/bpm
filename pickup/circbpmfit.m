@@ -48,11 +48,11 @@ if isscalar(Wspec)
     end
 end
 
-poly.x.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), x, coeff_desc_x, Inf, W);
+poly.x.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), x, coeff_desc_x, 0, W);
 poly.x.desc = coeff_desc_x;
-poly.y.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), y, coeff_desc_y, Inf, W);
+poly.y.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), y, coeff_desc_y, 0, W);
 poly.y.desc = coeff_desc_y;
-poly.q.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), q_bpm, coeff_desc_q, Inf, W);
+poly.q.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), q_bpm, coeff_desc_q, 0, W);
 poly.q.desc = coeff_desc_q;
-poly.sum.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), sum_bpm, coeff_desc_sum, Inf, W);
+poly.sum.coeff = fit2dsvd(xy_bpm(:,:,1), xy_bpm(:,:,2), sum_bpm, coeff_desc_sum, 0, W);
 poly.sum.desc = coeff_desc_sum;

@@ -1,7 +1,7 @@
-function coeff = fit2dsvd(x, y, z, coeff_desc, cond_tol, W)
+function coeff = fit2dsvd(x, y, z, coeff_desc, alpha, W)
 
-if nargin < 5 || isempty(cond_tol)
-    cond_tol = Inf;
+if nargin < 5 || isempty(alpha)
+    alpha = 0;
 end
 if nargin < 6 || isempty(W)
     W = [];
@@ -17,9 +17,8 @@ if ~isempty(W)
     z = W*z;
 end
 
-sv = svd(M);
-cond = sv(1)./sv(2:end);
-idx_cond = find(cond < cond_tol);
-tol = sv(idx_cond(end)+1);
+[U,S,V] = svd(M,'econ');
+sig = diag(S);
+invsig = sig./(sig.^2 + alpha^2);
 
-coeff = pinv(M,tol)*z;
+coeff = V*diag(invsig)*U'*z;
